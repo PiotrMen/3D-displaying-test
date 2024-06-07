@@ -1,3 +1,4 @@
+#include <iostream>
 #include <glad/glad.h>
 #include "GLFW/glfw3.h"
 #include <imgui.h>
@@ -9,7 +10,6 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
-#include <iostream>
 #include <vector>
 
 // Shaders
@@ -225,4 +225,5 @@ unsigned int compileShader(unsigned int type, const char* source)
 	int result;
 	glGetShaderiv(id, GL_COMPILE_STATUS, &result);
 	/*if (*/
+	return 0;
 }
