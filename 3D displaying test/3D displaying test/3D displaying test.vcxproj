@@ -112,7 +112,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Dependencies/Imgui/;%(AdditionalIncludeDirectories);Dependencies/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Dependencies/Imgui/;%(AdditionalIncludeDirectories);Dependencies/;Dependencies/glm/</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,7 +127,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Dependencies/Imgui/;Dependencies/;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Dependencies/Imgui/;Dependencies/;Dependencies/glm/</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
