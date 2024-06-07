@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+/3D displaying test/.vs/3D displaying test/v17
+3D displaying test/.vs/3D displaying test/FileContentIndex/read.lock
+3D displaying test/.vs/3D displaying test/FileContentIndex/bb781862-f27c-41fd-8bb5-9902147630b4.vsidx
