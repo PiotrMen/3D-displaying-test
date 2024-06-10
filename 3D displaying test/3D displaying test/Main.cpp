@@ -54,8 +54,12 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	// Create a windowed mode window and its OpenGL context
-	GLFWwindow* window = glfwCreateWindow(800, 600, "3D Model Viewer", NULL, NULL);
+	GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
+
+	const GLFWvidmode* mode = glfwGetVideoMode(primaryMonitor);
+
+	GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, "3D Model Viewer", primaryMonitor, NULL);
+
 	if (!window)
 	{
 		glfwTerminate();
@@ -86,7 +90,7 @@ int main()
 
 	// Load model
 	std::vector<float> vertices;
-	loadModel("C:/Users/Komputer/Desktop/projekt/3D-displaying-test/3D displaying test/3D displaying test/3d files/figure_Hollow_Supp.stl", vertices);
+	loadModel("3d files/Orco.stl", vertices);
 
 	// Set up vertex data and buffers and configure vertex attributes
 	unsigned int VBO, VAO;
@@ -112,7 +116,7 @@ int main()
 	unsigned int texColorBuffer;
 	glGenTextures(1, &texColorBuffer);
 	glBindTexture(GL_TEXTURE_2D, texColorBuffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, mode->width, mode->height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texColorBuffer, 0);
@@ -121,7 +125,7 @@ int main()
 	unsigned int rbo;
 	glGenRenderbuffers(1, &rbo);
 	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, mode->width, mode->height);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
 
 	// Check if framebuffer is complete
@@ -157,7 +161,7 @@ int main()
 		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(45.f), glm::vec3(0.0f, 0.0f, 1.0f));//rotacja bryly
 		view = glm::translate(view, glm::vec3(30.0f, 70.0f, -250.0f));//ustawienie kamery w ukladzie wspolrzednych
 		view = glm::rotate(view, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)); // Obróæ kamerê w przestrzeni
-		projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 1000.0f);
+		projection = glm::perspective(glm::radians(45.0f), static_cast<float>(mode->width) / static_cast<float>(mode->height), 0.1f, 1000.0f);
 
 		unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
 		unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
@@ -174,9 +178,9 @@ int main()
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glDisable(GL_DEPTH_TEST);
 
-		// Clear the color buffer for the default framebuffer
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		//// Clear the color buffer for the default framebuffer
+		//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		//glClear(GL_COLOR_BUFFER_BIT);
 
 		// Start the ImGui frame
 		ImGui_ImplOpenGL3_NewFrame();
@@ -185,7 +189,7 @@ int main()
 
 		// Show a simple window
 		ImGui::Begin("3D Model Viewer");
-		ImGui::Image((void*)(intptr_t)texColorBuffer, ImVec2(800, 600));
+		ImGui::Image((void*)(intptr_t)texColorBuffer, ImVec2( mode->width, mode->height));
 		ImGui::End();
 
 		// Rendering
