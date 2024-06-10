@@ -86,7 +86,7 @@ int main()
 
 	// Load model
 	std::vector<float> vertices;
-	loadModel("path/to/your/model.stl", vertices);
+	loadModel("C:/Users/Komputer/Desktop/projekt/3D-displaying-test/3D displaying test/3D displaying test/3d files/figure_Hollow_Supp.stl", vertices);
 
 	// Set up vertex data and buffers and configure vertex attributes
 	unsigned int VBO, VAO;
@@ -153,9 +153,11 @@ int main()
 		glm::mat4 model = glm::mat4(1.0f);
 		glm::mat4 view = glm::mat4(1.0f);
 		glm::mat4 projection = glm::mat4(1.0f);
-		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-		projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));//ustawienie bryly w ukladzie
+		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(45.f), glm::vec3(0.0f, 0.0f, 1.0f));//rotacja bryly
+		view = glm::translate(view, glm::vec3(30.0f, 70.0f, -250.0f));//ustawienie kamery w ukladzie wspolrzednych
+		view = glm::rotate(view, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)); // Obróæ kamerê w przestrzeni
+		projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 1000.0f);
 
 		unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
 		unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
