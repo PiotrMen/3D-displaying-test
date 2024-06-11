@@ -11,36 +11,11 @@
 #include "glm/gtc/type_ptr.hpp"
 #include <iostream>
 #include <vector>
+#include "shaders.h"
 
-// Shaders
-const char* vertexShaderSource = R"(
-#version 330 core
-layout(location = 0) in vec3 aPos;
-
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
-
-void main()
-{
-    gl_Position = projection * view * model * vec4(aPos, 1.0);
-}
-)";
-
-const char* fragmentShaderSource = R"(
-#version 330 core
-out vec4 FragColor;
-
-void main()
-{
-    FragColor = vec4(1.0, 0.5, 0.2, 1.0);
-}
-)";
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
-unsigned int compileShader(unsigned int type, const char* source);
-unsigned int createShaderProgram();
 void loadModel(const std::string& path, std::vector<float>& vertices);
 
 int main()
@@ -86,11 +61,11 @@ int main()
 	ImGui_ImplOpenGL3_Init("#version 330");
 
 	// Build and compile our shader program
-	unsigned int shaderProgram = createShaderProgram();
+	unsigned int shaderProgram = createShaderProgram("shaders/vertex_shader.glsl", "shaders/fragment_shader.glsl");
 
 	// Load model
 	std::vector<float> vertices;
-	loadModel("3d files/Orco.stl", vertices);
+	loadModel("3d files/figure_Hollow_Supp.stl", vertices);
 
 	// Set up vertex data and buffers and configure vertex attributes
 	unsigned int VBO, VAO;
@@ -138,7 +113,6 @@ int main()
 	{
 		// Input
 		processInput(window);
-
 
 		// Clear the color and depth buffer for the outer window
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -229,46 +203,6 @@ void processInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
-}
-
-unsigned int compileShader(unsigned int type, const char* source)
-{
-	unsigned int id = glCreateShader(type);
-	glShaderSource(id, 1, &source, nullptr);
-	glCompileShader(id);
-
-	int result;
-	glGetShaderiv(id, GL_COMPILE_STATUS, &result);
-	if (result == GL_FALSE)
-	{
-		int length;
-		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
-		char* message = (char*)alloca(length * sizeof(char));
-		glGetShaderInfoLog(id, length, &length, message);
-		std::cout << "Failed to compile " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << " shader!" << std::endl;
-		std::cout << message << std::endl;
-		glDeleteShader(id);
-		return 0;
-	}
-
-	return id;
-}
-
-unsigned int createShaderProgram()
-{
-	unsigned int program = glCreateProgram();
-	unsigned int vs = compileShader(GL_VERTEX_SHADER, vertexShaderSource);
-	unsigned int fs = compileShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
-
-	glAttachShader(program, vs);
-	glAttachShader(program, fs);
-	glLinkProgram(program);
-	glValidateProgram(program);
-
-	glDeleteShader(vs);
-	glDeleteShader(fs);
-
-	return program;
 }
 
 void loadModel(const std::string& path, std::vector<float>& vertices)

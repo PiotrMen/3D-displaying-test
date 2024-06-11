@@ -153,6 +153,7 @@
     <ClCompile Include="Dependencies\Imgui\imgui_tables.cpp" />
     <ClCompile Include="Dependencies\Imgui\imgui_widgets.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Shaders.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\assimp\Importer.hpp" />
@@ -459,6 +460,7 @@
     <ClInclude Include="Dependencies\Imgui\imstb_truetype.h" />
     <ClInclude Include="Dependencies\KHR\khrplatform.h" />
     <ClInclude Include="Imgui\imgui.h" />
+    <ClInclude Include="Shaders.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Dependencies\glm\detail\func_common.inl" />
