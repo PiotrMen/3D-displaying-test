@@ -13,7 +13,13 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\Imgui">
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{40c90cd7-6e99-4bd3-9209-d32b8aea001d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies">
+      <UniqueIdentifier>{0118bd6b-41ca-4aa5-a79f-73268fad732a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Imgui">
       <UniqueIdentifier>{5919f296-3ffa-4840-b116-a0fca7edf713}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -21,40 +27,40 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Dependencies\glm\detail\glm.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\Imgui\imgui.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\Imgui\imgui_demo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\Imgui\imgui_draw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\Imgui\imgui_impl_glfw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\Imgui\imgui_impl_opengl3.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\Imgui\imgui_tables.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\Imgui\imgui_widgets.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Shaders.cpp">
+      <Filter>Shaders</Filter>
     </ClCompile>
     <ClCompile Include="Dependencies\glad\glad.c">
-      <Filter>Source Files</Filter>
+      <Filter>Dependencies</Filter>
     </ClCompile>
-    <ClCompile Include="Shaders.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Dependencies\glm\detail\glm.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Imgui\imgui.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Imgui\imgui_demo.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Imgui\imgui_draw.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Imgui\imgui_impl_glfw.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Imgui\imgui_impl_opengl3.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Imgui\imgui_tables.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\Imgui\imgui_widgets.cpp">
+      <Filter>Dependencies</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Imgui\imgui.h">
-      <Filter>Source Files\Imgui</Filter>
+      <Filter>Dependencies\Imgui</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\assimp\Importer.hpp">
       <Filter>Header Files</Filter>
@@ -966,7 +972,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shaders.h">
-      <Filter>Header Files</Filter>
+      <Filter>Shaders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
