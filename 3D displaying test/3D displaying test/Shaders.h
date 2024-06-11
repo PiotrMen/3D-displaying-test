@@ -7,14 +7,23 @@
 
 class Shader {
 public:
-	Shader(const std::string& filePath);
+	explicit Shader(unsigned int type,const std::string& filePath) : _shaderPath(filePath),_type(type) {}
+	std::string readFile();
+	unsigned int compileShader();
+
 private:
 	std::string _shaderPath;
-	
+	unsigned int _type;
 };
 
-unsigned int createShaderProgram(const std::string& vertexPath, const std::string& fragmentPath);
+class ShaderProgramCreator {
+public:
+	ShaderProgramCreator(const Shader& vertexShader, const Shader& fragmentShader) : _vertexShader(vertexShader), _fragmentShader(fragmentShader) {}
 
-std::string readShaderFile(const std::string& filePath);
-unsigned int compileShader(unsigned int type, const std::string& source);
+	unsigned int createShaderProgram();
+private:
+	Shader _vertexShader;
+	Shader _fragmentShader;
+};
+
 void setModelViewProjection(unsigned int shaderProgram, const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection);

@@ -4,12 +4,12 @@
 #include <iostream>
 #include <glm/gtc/type_ptr.hpp>
 
-std::string readShaderFile(const std::string& filePath)
+std::string Shader::readFile()
 {
-    std::ifstream file(filePath);
+    std::ifstream file(this->_shaderPath);
     if (!file)
     {
-        std::cerr << "Failed to load shader file: " << filePath << std::endl;
+        std::cerr << "Failed to load shader file: " << this->_shaderPath << std::endl;
         return "";
     }
 
@@ -18,10 +18,10 @@ std::string readShaderFile(const std::string& filePath)
     return buffer.str();
 }
 
-unsigned int compileShader(unsigned int type, const std::string& source)
+unsigned int Shader::compileShader()
 {
-    unsigned int id = glCreateShader(type);
-    const char* src = source.c_str();
+    unsigned int id = glCreateShader(this->_type);
+    const char* src = this->readFile().c_str();
     glShaderSource(id, 1, &src, nullptr);
     glCompileShader(id);
 
@@ -33,7 +33,7 @@ unsigned int compileShader(unsigned int type, const std::string& source)
         glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
         char* message = new char[length];
         glGetShaderInfoLog(id, length, &length, message);
-        std::cout << "Failed to compile " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << " shader!" << std::endl;
+        std::cout << "Failed to compile " << (this->_type == GL_VERTEX_SHADER ? "vertex" : "fragment") << " shader!" << std::endl;
         std::cout << message << std::endl;
         glDeleteShader(id);
         delete[] message;
@@ -43,14 +43,11 @@ unsigned int compileShader(unsigned int type, const std::string& source)
     return id;
 }
 
-unsigned int createShaderProgram(const std::string& vertexPath, const std::string& fragmentPath)
+
+unsigned int ShaderProgramCreator::createShaderProgram()
 {
-    std::string vertexCode = readShaderFile("shaders/vertex_shader.glsl");
-    std::string fragmentCode = readShaderFile("shaders/fragment_shader.glsl");
-
-    unsigned int vs = compileShader(GL_VERTEX_SHADER, vertexCode);
-    unsigned int fs = compileShader(GL_FRAGMENT_SHADER, fragmentCode);
-
+    unsigned int vs = this->_vertexShader.compileShader();
+    unsigned int fs = this->_fragmentShader.compileShader();
     unsigned int program = glCreateProgram();
     glAttachShader(program, vs);
     glAttachShader(program, fs);

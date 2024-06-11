@@ -61,7 +61,9 @@ int main()
 	ImGui_ImplOpenGL3_Init("#version 330");
 
 	// Build and compile our shader program
-	unsigned int shaderProgram = createShaderProgram("shaders/vertex_shader.glsl", "shaders/fragment_shader.glsl");
+	ShaderProgramCreator shaderProgramCreator(Shader(GL_VERTEX_SHADER, "shaders/vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/fragment_shader.glsl"));
+
+	unsigned int shaderProgram = shaderProgramCreator.createShaderProgram();
 
 	// Load model
 	std::vector<float> vertices;
