@@ -33,7 +33,7 @@ int main()
 
 	const GLFWvidmode* mode = glfwGetVideoMode(primaryMonitor);
 
-	GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, "3D Model Viewer", primaryMonitor, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 720, "3D Model Viewer", NULL, NULL);
 
 	if (!window)
 	{

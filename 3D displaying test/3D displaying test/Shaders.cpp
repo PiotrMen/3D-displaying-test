@@ -21,8 +21,9 @@ std::string Shader::readFile()
 unsigned int Shader::compileShader()
 {
     unsigned int id = glCreateShader(this->_type);
-    const char* src = this->readFile().c_str();
-    glShaderSource(id, 1, &src, nullptr);
+    std::string src = this->readFile();
+    const char* stringToChar = src.c_str();
+    glShaderSource(id, 1, &stringToChar, nullptr);
     glCompileShader(id);
 
     int result;
