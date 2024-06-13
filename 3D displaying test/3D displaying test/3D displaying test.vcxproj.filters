@@ -22,6 +22,9 @@
     <Filter Include="Dependencies\Imgui">
       <UniqueIdentifier>{5919f296-3ffa-4840-b116-a0fca7edf713}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Model">
+      <UniqueIdentifier>{b564136f-0a4b-4998-bc31-e1847dc72779}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -56,6 +59,9 @@
     </ClCompile>
     <ClCompile Include="Dependencies\Imgui\imgui_widgets.cpp">
       <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -973,6 +979,9 @@
     </ClInclude>
     <ClInclude Include="Shaders.h">
       <Filter>Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

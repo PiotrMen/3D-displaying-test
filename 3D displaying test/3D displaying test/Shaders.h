@@ -2,7 +2,6 @@
 
 #include <glad/glad.h>
 #include <string>
-#include <glm/glm.hpp>
 #include <iostream>
 
 class Shader {
@@ -26,4 +25,3 @@ private:
 	Shader _fragmentShader;
 };
 
-void setModelViewProjection(unsigned int shaderProgram, const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection);

@@ -12,11 +12,10 @@
 #include <iostream>
 #include <vector>
 #include "shaders.h"
-
+#include "Model.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
-void loadModel(const std::string& path, std::vector<float>& vertices);
 
 int main()
 {
@@ -62,12 +61,12 @@ int main()
 
 	// Build and compile our shader program
 	ShaderProgramCreator shaderProgramCreator(Shader(GL_VERTEX_SHADER, "shaders/vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/fragment_shader.glsl"));
-
 	unsigned int shaderProgram = shaderProgramCreator.createShaderProgram();
 
 	// Load model
-	std::vector<float> vertices;
-	loadModel("3d files/figure_Hollow_Supp.stl", vertices);
+	Model model("3d files/figure_Hollow_Supp.stl");
+	const std::vector<float>& vertices = model.getVertices();
+	model.loadModel();
 
 	// Set up vertex data and buffers and configure vertex attributes
 	unsigned int VBO, VAO;
@@ -148,10 +147,6 @@ int main()
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glDisable(GL_DEPTH_TEST);
 
-		//// Clear the color buffer for the default framebuffer
-		//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		//glClear(GL_COLOR_BUFFER_BIT);
-
 		// Start the ImGui frame
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -199,23 +194,4 @@ void processInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
-}
-
-void loadModel(const std::string& path, std::vector<float>& vertices)
-{
-	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
-	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
-	{
-		std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
-		return;
-	}
-
-	aiMesh* mesh = scene->mMeshes[0];
-	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
-	{
-		vertices.push_back(mesh->mVertices[i].x);
-		vertices.push_back(mesh->mVertices[i].y);
-		vertices.push_back(mesh->mVertices[i].z);
-	}
 }
