@@ -64,22 +64,10 @@ int main()
 	unsigned int shaderProgram = shaderProgramCreator.createShaderProgram();
 
 	// Load model
-	Model model("3d files/figure_Hollow_Supp.stl");
-	const std::vector<float>& vertices = model.getVertices();
-	model.loadModel();
-
-	// Set up vertex data and buffers and configure vertex attributes
-	unsigned int VBO, VAO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
+	Model Model("3d files/figure_Hollow_Supp.stl");
+	const std::vector<float>& vertices =Model.getVertices();
+	Model.loadModel();
+	Model.setupModel();
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -140,7 +128,7 @@ int main()
 
 		setModelViewProjection(shaderProgram, model, view, projection);
 
-		glBindVertexArray(VAO);
+		Model.bind();	
 		glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 3);
 
 		// Second pass: render the framebuffer texture to the default framebuffer
@@ -169,8 +157,7 @@ int main()
 	}
 
 	// Cleanup
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
+	Model.cleanup();
 	glDeleteProgram(shaderProgram);
 	glDeleteFramebuffers(1, &framebuffer);
 	glDeleteTextures(1, &texColorBuffer);

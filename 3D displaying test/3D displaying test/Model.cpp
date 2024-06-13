@@ -21,16 +21,44 @@ void Model::loadModel()
     aiMesh* mesh = scene->mMeshes[0];
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
-        vertices.push_back(mesh->mVertices[i].x);
-        vertices.push_back(mesh->mVertices[i].y);
-        vertices.push_back(mesh->mVertices[i].z);
+        this->_vertices.push_back(mesh->mVertices[i].x);
+        this->_vertices.push_back(mesh->mVertices[i].y);
+        this->_vertices.push_back(mesh->mVertices[i].z);
     }
 }
 
 const std::vector<float>& Model::getVertices() const
 {
-    return vertices;
+    return this->_vertices;
 }
+
+void Model::setupModel()
+{
+    // Generate and bind vertex array and buffer objects
+    glGenVertexArrays(1, &this->_VAO);
+    glGenBuffers(1, &this->_VBO);
+
+    glBindVertexArray(this->_VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, this->_VBO);
+    glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(float), _vertices.data(), GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glBindVertexArray(0); // Unbind VAO to prevent accidental modifications
+}
+
+void Model::bind() const
+{
+    glBindVertexArray(this->_VAO);
+}
+
+void Model::cleanup() {
+    glDeleteVertexArrays(1, &this->_VAO);
+    glDeleteBuffers(1, &this->_VBO);
+}
+
 
 void setModelViewProjection(unsigned int shaderProgram, const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection)
 {
