@@ -127,18 +127,9 @@ int main()
 		projection = glm::perspective(glm::radians(45.0f), static_cast<float>(mode->width) / static_cast<float>(mode->height), 0.1f, 1000.0f);
 
 
-		//unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
-		//unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
-		//unsigned int projectionLoc = glGetUniformLocation(shaderProgram, "projection");
-
-		//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-		//glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
 		shaderProgram.setMat4("model", model);
 		shaderProgram.setMat4("view", view);
 		shaderProgram.setMat4("projection", projection);
-		//setModelViewProjection(shaderProgram.getID(), model, view, projection);
 
 		Model.bind();
 		glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 3);
