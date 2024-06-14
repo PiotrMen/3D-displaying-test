@@ -62,7 +62,7 @@ bool Shader::checkCompileErrors() const
 
 ShaderProgram::ShaderProgram(const Shader& vertexShader, const Shader& fragmentShader) : _vertexShader(vertexShader), _fragmentShader(fragmentShader), _id(0)
 {
-
+	this->createShaderProgram();
 }
 
 ShaderProgram::~ShaderProgram()

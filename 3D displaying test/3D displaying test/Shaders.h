@@ -11,10 +11,10 @@ class Shader {
 public:
 	explicit Shader(unsigned int type, const std::string& filePath) : _shaderPath(filePath), _type(type), _id(0) {}
 	std::string readFile();
-	unsigned int compileShader();
 
 	unsigned int getType() const noexcept;
 	unsigned int getID() const noexcept;
+	unsigned int compileShader();
 
 private:
 
@@ -33,7 +33,6 @@ public:
 
 	~ShaderProgram();
 
-	unsigned int createShaderProgram();
 
 	unsigned int getID() const noexcept;
 
@@ -65,6 +64,7 @@ public:
 
 private:
 	bool checkCompileErrors(unsigned int id);
+	unsigned int createShaderProgram();
 
 private:
 

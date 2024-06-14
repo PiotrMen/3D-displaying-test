@@ -59,6 +59,12 @@ void Model::setupModel()
     glBindVertexArray(0); // Unbind VAO to prevent accidental modifications
 }
 
+Model::Model(const std::string& path) : _path(path), _VAO(0), _VBO(0), _model(glm::mat4(1.f))
+{
+    this->loadModel();
+    this->setupModel();
+}
+
 void Model::bind() const
 {
     glBindVertexArray(this->_VAO);

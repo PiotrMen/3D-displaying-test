@@ -67,14 +67,10 @@ int main()
 	//ShaderProgram shaderProgram(Shader(GL_VERTEX_SHADER, "shaders/Gradient_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/Gradient_fragment_shader.glsl"));
 	ShaderProgram shaderProgram(Shader(GL_VERTEX_SHADER, "shaders/ligthing_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/ligthing_fragment_shader.glsl"));
 	ShaderProgram shaderCube(Shader(GL_VERTEX_SHADER, "shaders/cube_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/cube_fragment_shader.glsl"));
-	shaderProgram.createShaderProgram();
-	shaderCube.createShaderProgram();
 
 	// Load model
 	Model modelObj("3d files/figure_Hollow_Supp.stl");
 	Camera camera(glm::vec3(0.0f, 0.0f, 10.0f));
-	modelObj.loadModel();
-	modelObj.setupModel();
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -157,6 +153,11 @@ int main()
 		ImGui::SliderFloat("ambientStrength", &ambientStrength, 0.0f, 1.0f);
 		ImGui::Text("Value: %.3f", ambientStrength);
 		//ImGui::SameLine();
+
+		static float diffuseStrength = 0.5f;
+		ImGui::SliderFloat("diffuseStrength", &diffuseStrength, 0.0f, 1.0f);
+		ImGui::Text("Value: %.3f", diffuseStrength);
+
 		static float specularStrength = 0.5f;
 		ImGui::SliderFloat("specularStrength", &specularStrength, 0.0f, 1.0f);
 		ImGui::Text("Value: %.3f", specularStrength);
@@ -171,11 +172,12 @@ int main()
 		shaderProgram.setFloat("gradientPow", 7.0);
 
 		//lightingShader
-		shaderProgram.setVec3("lightPos", camera.Position);
+		shaderProgram.setVec3("lightPos", lightPos);
 		shaderProgram.setVec3("viewPos", camera.Position);
 		shaderProgram.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
 		shaderProgram.setVec3("objectColor", glm::vec3(0.5f, 0.5f, 0.5f));
 		shaderProgram.setFloat("ambientStrength", ambientStrength);
+		shaderProgram.setFloat("diffuseStrength", diffuseStrength);
 		shaderProgram.setFloat("specularStrength", specularStrength);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDrawArrays(GL_TRIANGLES, 0, modelObj.getVertices().size());

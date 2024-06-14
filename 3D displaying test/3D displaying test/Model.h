@@ -13,14 +13,16 @@ struct Vertex {
 class Model
 {
 public:
-    Model(const std::string& path) : _path(path), _VAO(0), _VBO(0), _model(glm::mat4(1.f)) {}
-    void setupModel();
-    void loadModel();
+    Model(const std::string& path);
     void bind() const;
     const std::vector<Vertex>& getVertices() const;
     void cleanup();
     glm::mat4 getModelMatrix() const noexcept;
     glm::mat4 setModelMatrix(const glm::mat4& modelToSet) noexcept;
+
+private:
+    void setupModel();
+    void loadModel();
 
 private:
     std::string _path;
