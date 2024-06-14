@@ -66,7 +66,9 @@ int main()
 	// Build and compile our shader program
 	//ShaderProgram shaderProgram(Shader(GL_VERTEX_SHADER, "shaders/Gradient_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/Gradient_fragment_shader.glsl"));
 	ShaderProgram shaderProgram(Shader(GL_VERTEX_SHADER, "shaders/ligthing_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/ligthing_fragment_shader.glsl"));
+	ShaderProgram shaderCube(Shader(GL_VERTEX_SHADER, "shaders/cube_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/cube_fragment_shader.glsl"));
 	shaderProgram.createShaderProgram();
+	shaderCube.createShaderProgram();
 
 	// Load model
 	Model modelObj("3d files/figure_Hollow_Supp.stl");
@@ -103,6 +105,7 @@ int main()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	glm::vec3 cameraTarget = glm::vec3(0.0f, -100.0f, 0.0f);
+	glm::vec3 lightPos(150.0f, -250.0f, 0.0f);
 	// Ustawianie macierzy modelu
 	modelObj.setModelMatrix(glm::translate(modelObj.getModelMatrix(), glm::vec3(0.0f, 0.0f, 0.0f))); // ustawienie bry³y w uk³adzie
 	modelObj.setModelMatrix(glm::rotate(modelObj.getModelMatrix(), glm::radians(90.f), glm::vec3(1.0f, 0.0f, 0.0f))); // rotacja bry³y mo¿liwa równie¿ przez obrot kamery wektor "Front"
@@ -110,6 +113,14 @@ int main()
 	// Render loop
 	while (!glfwWindowShouldClose(window))
 	{
+		// Start the ImGui frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+		// Show a simple window
+		ImGui::Begin("3D Model Viewer");
+
 		// Input
 		processInput(window);
 
@@ -141,6 +152,15 @@ int main()
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), static_cast<float>(mode->width) / static_cast<float>(mode->height), 0.1f, 1000.0f);
 		glm::mat4 view = camera.GetViewMatrix();  // Uzyskanie macierzy widoku z kamery
 		
+		static float ambientStrength = 0.1f;
+		ImGui::Begin("Light slider");
+		ImGui::SliderFloat("ambientStrength", &ambientStrength, 0.0f, 1.0f);
+		ImGui::Text("Value: %.3f", ambientStrength);
+		//ImGui::SameLine();
+		static float specularStrength = 0.5f;
+		ImGui::SliderFloat("specularStrength", &specularStrength, 0.0f, 1.0f);
+		ImGui::Text("Value: %.3f", specularStrength);
+		ImGui::End();
 		modelObj.bind();
 		//Gradient shader
 		shaderProgram.setMat4("model", modelObj.getModelMatrix());
@@ -155,21 +175,26 @@ int main()
 		shaderProgram.setVec3("viewPos", camera.Position);
 		shaderProgram.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
 		shaderProgram.setVec3("objectColor", glm::vec3(0.5f, 0.5f, 0.5f));
-
+		shaderProgram.setFloat("ambientStrength", ambientStrength);
+		shaderProgram.setFloat("specularStrength", specularStrength);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDrawArrays(GL_TRIANGLES, 0, modelObj.getVertices().size());
+
+		shaderCube.use();
+		shaderCube.setMat4("projection", projection);
+		shaderCube.setMat4("view", view);
+		glm::mat4 lamp = glm::mat4(1.0f);
+		lamp = glm::translate(lamp, lightPos);
+		lamp = glm::scale(lamp, glm::vec3(6.0f)); // wiêksza skala lampy
+		shaderCube.setMat4("model", lamp);
+
+		// Zak³adaj¹c, ¿e masz szeœcian z 36 wierzcho³kami
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		// Second pass: render the framebuffer texture to the default framebuffer
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glDisable(GL_DEPTH_TEST);
 
-		// Start the ImGui frame
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-
-		// Show a simple window
-		ImGui::Begin("3D Model Viewer");
 		ImGui::Image((void*)(intptr_t)texColorBuffer, ImVec2(mode->width, mode->height));
 		ImGui::End();
 
