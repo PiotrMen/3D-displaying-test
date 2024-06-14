@@ -19,5 +19,5 @@ private:
     std::vector<float> _vertices;
 };
 
-void setModelViewProjection(unsigned int shaderProgram, const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection);
+// void setModelViewProjection(unsigned int shaderProgram, const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection);
 

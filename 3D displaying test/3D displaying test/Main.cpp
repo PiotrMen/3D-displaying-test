@@ -60,12 +60,12 @@ int main()
 	ImGui_ImplOpenGL3_Init("#version 330");
 
 	// Build and compile our shader program
-	ShaderProgramCreator shaderProgramCreator(Shader(GL_VERTEX_SHADER, "shaders/vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/fragment_shader.glsl"));
-	unsigned int shaderProgram = shaderProgramCreator.createShaderProgram();
+	ShaderProgram shaderProgram(Shader(GL_VERTEX_SHADER, "shaders/vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/fragment_shader.glsl"));
+	shaderProgram.createShaderProgram();
 
 	// Load model
 	Model Model("3d files/figure_Hollow_Supp.stl");
-	const std::vector<float>& vertices =Model.getVertices();
+	const std::vector<float>& vertices = Model.getVertices();
 	Model.loadModel();
 	Model.setupModel();
 
@@ -114,7 +114,7 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Draw the model
-		glUseProgram(shaderProgram);
+		shaderProgram.use();
 
 		// Create transformations
 		glm::mat4 model = glm::mat4(1.0f);
@@ -126,9 +126,21 @@ int main()
 		view = glm::rotate(view, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)); // Obróæ kamerê w przestrzeni
 		projection = glm::perspective(glm::radians(45.0f), static_cast<float>(mode->width) / static_cast<float>(mode->height), 0.1f, 1000.0f);
 
-		setModelViewProjection(shaderProgram, model, view, projection);
 
-		Model.bind();	
+		//unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
+		//unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
+		//unsigned int projectionLoc = glGetUniformLocation(shaderProgram, "projection");
+
+		//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+		//glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+		shaderProgram.setMat4("model", model);
+		shaderProgram.setMat4("view", view);
+		shaderProgram.setMat4("projection", projection);
+		//setModelViewProjection(shaderProgram.getID(), model, view, projection);
+
+		Model.bind();
 		glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 3);
 
 		// Second pass: render the framebuffer texture to the default framebuffer
@@ -142,7 +154,7 @@ int main()
 
 		// Show a simple window
 		ImGui::Begin("3D Model Viewer");
-		ImGui::Image((void*)(intptr_t)texColorBuffer, ImVec2( mode->width, mode->height));
+		ImGui::Image((void*)(intptr_t)texColorBuffer, ImVec2(mode->width, mode->height));
 		ImGui::End();
 
 		// Rendering
@@ -158,7 +170,7 @@ int main()
 
 	// Cleanup
 	Model.cleanup();
-	glDeleteProgram(shaderProgram);
+	//glDeleteProgram(shaderProgram);
 	glDeleteFramebuffers(1, &framebuffer);
 	glDeleteTextures(1, &texColorBuffer);
 	glDeleteRenderbuffers(1, &rbo);
