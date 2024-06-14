@@ -25,6 +25,9 @@
     <Filter Include="Model">
       <UniqueIdentifier>{b564136f-0a4b-4998-bc31-e1847dc72779}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Camera">
+      <UniqueIdentifier>{8d21600a-b460-4b94-9b7a-daa0c6c602ec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -62,6 +65,9 @@
     </ClCompile>
     <ClCompile Include="Model.cpp">
       <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -982,6 +988,9 @@
     </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

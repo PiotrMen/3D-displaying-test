@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Dependencies\glad\glad.c" />
     <ClCompile Include="Dependencies\glm\detail\glm.cpp" />
     <ClCompile Include="Dependencies\Imgui\imgui.cpp" />
@@ -460,6 +461,7 @@
     <ClInclude Include="Dependencies\Imgui\imstb_textedit.h" />
     <ClInclude Include="Dependencies\Imgui\imstb_truetype.h" />
     <ClInclude Include="Dependencies\KHR\khrplatform.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Imgui\imgui.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Shaders.h" />
