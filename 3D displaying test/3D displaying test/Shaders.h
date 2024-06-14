@@ -19,6 +19,7 @@ public:
 private:
 
 	bool checkCompileErrors() const;
+
 private:
 	std::string _shaderPath;
 	unsigned int _type;
@@ -37,7 +38,7 @@ public:
 	unsigned int getID() const noexcept;
 
 	void deleteProgram() const;
-
+	
 	void use();
 
 	void setBool(const std::string& name, bool value) const;

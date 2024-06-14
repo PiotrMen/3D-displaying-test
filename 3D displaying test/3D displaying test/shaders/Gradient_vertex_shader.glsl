@@ -9,6 +9,8 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 uniform vec3 cameraPos;
+uniform float maxDistance;
+uniform float gradientPow;
 
 void main()
 {
@@ -18,11 +20,14 @@ void main()
     // Przelicz odległość od kamery do pozycji w świecie
     float distance = length(cameraPos - vec3(worldPosition));
     
-    // Zwiększ zakres normalizacji odległości, np. 1000 zamiast 300
-    float normalizedDistance = distance / 100.0; 
+    // Znormalizuj odległość do zakresu [0, 1] na podstawie maxDistance
+    float normalizedDistance = distance / maxDistance;
 
-    // Użyj funkcji pow, aby zwiększyć kontrast gradientu, np. 2.0 lub 3.0
-    float contrast = pow(normalizedDistance, 3.0); 
+    // Upewnij się, że znormalizowana odległość jest w zakresie [0, 1]
+    normalizedDistance = clamp(normalizedDistance, 0.0, 1.0);
+
+    // Użyj funkcji pow, aby zwiększyć kontrast gradientu
+    float contrast = pow(normalizedDistance, gradientPow); 
 
     // Ustaw kolor na podstawie znormalizowanej odległości i zwiększonego kontrastu
     vertexColor = vec3(1.0 - contrast, 0.0, contrast);

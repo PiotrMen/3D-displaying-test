@@ -11,7 +11,7 @@
 void Model::loadModel()
 {
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(this->_path, aiProcess_Triangulate | aiProcess_FlipUVs);
+    const aiScene* scene = importer.ReadFile(this->_path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
         std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
@@ -21,13 +21,18 @@ void Model::loadModel()
     aiMesh* mesh = scene->mMeshes[0];
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
-        this->_vertices.push_back(mesh->mVertices[i].x);
-        this->_vertices.push_back(mesh->mVertices[i].y);
-        this->_vertices.push_back(mesh->mVertices[i].z);
+		Vertex vertex;
+		vertex.position = glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
+		if (mesh->HasNormals()) {
+			vertex.normal = glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
+		}
+
+		vertex.color = glm::vec3(1.0f, 1.0f, 1.0f); // Initial color (white), will be recalculated in the vertex shader
+		this->_vertices.emplace_back(vertex);
     }
 }
 
-const std::vector<float>& Model::getVertices() const
+const std::vector<Vertex>& Model::getVertices() const
 {
     return this->_vertices;
 }
@@ -41,9 +46,14 @@ void Model::setupModel()
     glBindVertexArray(this->_VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, this->_VBO);
-    glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(float), _vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, this->_vertices.size() * sizeof(Vertex), this->_vertices.data(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
+
     glEnableVertexAttribArray(0);
 
     glBindVertexArray(0); // Unbind VAO to prevent accidental modifications
@@ -59,14 +69,12 @@ void Model::cleanup() {
     glDeleteBuffers(1, &this->_VBO);
 }
 
+glm::mat4 Model::getModelMatrix() const noexcept
+{
+    return this->_model;
+}
 
-//void setModelViewProjection(unsigned int shaderProgram, const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection)
-//{
-//    unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
-//    unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
-//    unsigned int projectionLoc = glGetUniformLocation(shaderProgram, "projection");
-//
-//    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-//    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-//    glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-//}
+glm::mat4 Model::setModelMatrix(const glm::mat4& modelToSet) noexcept
+{
+    return this->_model = modelToSet;
+}

@@ -15,6 +15,7 @@
 #include "Model.h"
 #include "Camera.h"
 
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
@@ -52,6 +53,8 @@ int main()
 		return -1;
 	}
 
+	glEnable(GL_DEPTH_TEST);
+
 	// Setup ImGui
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -61,15 +64,15 @@ int main()
 	ImGui_ImplOpenGL3_Init("#version 330");
 
 	// Build and compile our shader program
-	ShaderProgram shaderProgram(Shader(GL_VERTEX_SHADER, "shaders/vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/fragment_shader.glsl"));
+	//ShaderProgram shaderProgram(Shader(GL_VERTEX_SHADER, "shaders/Gradient_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/Gradient_fragment_shader.glsl"));
+	ShaderProgram shaderProgram(Shader(GL_VERTEX_SHADER, "shaders/ligthing_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/ligthing_fragment_shader.glsl"));
 	shaderProgram.createShaderProgram();
 
 	// Load model
-	Model Model("3d files/figure_Hollow_Supp.stl");
+	Model modelObj("3d files/figure_Hollow_Supp.stl");
 	Camera camera(glm::vec3(0.0f, 0.0f, 10.0f));
-	const std::vector<float>& vertices = Model.getVertices();
-	Model.loadModel();
-	Model.setupModel();
+	modelObj.loadModel();
+	modelObj.setupModel();
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -101,9 +104,8 @@ int main()
 
 	glm::vec3 cameraTarget = glm::vec3(0.0f, -100.0f, 0.0f);
 	// Ustawianie macierzy modelu
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // ustawienie bry³y w uk³adzie
-	model = glm::rotate(model, glm::radians(90.f), glm::vec3(1.0f, 0.0f, 0.0f)); // rotacja bry³y mo¿liwa równie¿ przez obrot kamery wektor "Front"
+	modelObj.setModelMatrix(glm::translate(modelObj.getModelMatrix(), glm::vec3(0.0f, 0.0f, 0.0f))); // ustawienie bry³y w uk³adzie
+	modelObj.setModelMatrix(glm::rotate(modelObj.getModelMatrix(), glm::radians(90.f), glm::vec3(1.0f, 0.0f, 0.0f))); // rotacja bry³y mo¿liwa równie¿ przez obrot kamery wektor "Front"
 
 	// Render loop
 	while (!glfwWindowShouldClose(window))
@@ -138,13 +140,24 @@ int main()
 		// Tworzenie transformacji
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), static_cast<float>(mode->width) / static_cast<float>(mode->height), 0.1f, 1000.0f);
 		glm::mat4 view = camera.GetViewMatrix();  // Uzyskanie macierzy widoku z kamery
-
-		shaderProgram.setMat4("model", model);
+		
+		modelObj.bind();
+		//Gradient shader
+		shaderProgram.setMat4("model", modelObj.getModelMatrix());
 		shaderProgram.setMat4("view", view);
 		shaderProgram.setMat4("projection", projection);
+		shaderProgram.setVec3("cameraPos", camera.Position);
+		shaderProgram.setFloat("maxDistance", radius);
+		shaderProgram.setFloat("gradientPow", 7.0);
 
-		Model.bind();
-		glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 3);
+		//lightingShader
+		shaderProgram.setVec3("lightPos", camera.Position);
+		shaderProgram.setVec3("viewPos", camera.Position);
+		shaderProgram.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+		shaderProgram.setVec3("objectColor", glm::vec3(0.5f, 0.5f, 0.5f));
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glDrawArrays(GL_TRIANGLES, 0, modelObj.getVertices().size());
 
 		// Second pass: render the framebuffer texture to the default framebuffer
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -172,7 +185,7 @@ int main()
 	}
 
 	// Cleanup
-	Model.cleanup();
+	modelObj.cleanup();
 	//glDeleteProgram(shaderProgram);
 	glDeleteFramebuffers(1, &framebuffer);
 	glDeleteTextures(1, &texColorBuffer);
