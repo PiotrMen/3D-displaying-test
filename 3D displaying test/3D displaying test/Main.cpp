@@ -13,6 +13,7 @@
 #include <vector>
 #include "shaders.h"
 #include "Model.h"
+#include "Camera.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -65,6 +66,7 @@ int main()
 
 	// Load model
 	Model Model("3d files/figure_Hollow_Supp.stl");
+	Camera camera(glm::vec3(0.0f, 0.0f, 10.0f));
 	const std::vector<float>& vertices = Model.getVertices();
 	Model.loadModel();
 	Model.setupModel();
@@ -97,6 +99,12 @@ int main()
 		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	glm::vec3 cameraTarget = glm::vec3(0.0f, -100.0f, 0.0f);
+	// Ustawianie macierzy modelu
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // ustawienie bry³y w uk³adzie
+	model = glm::rotate(model, glm::radians(90.f), glm::vec3(1.0f, 0.0f, 0.0f)); // rotacja bry³y mo¿liwa równie¿ przez obrot kamery wektor "Front"
+
 	// Render loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -116,16 +124,20 @@ int main()
 		// Draw the model
 		shaderProgram.use();
 
-		// Create transformations
-		glm::mat4 model = glm::mat4(1.0f);
-		glm::mat4 view = glm::mat4(1.0f);
-		glm::mat4 projection = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));//ustawienie bryly w ukladzie
-		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(45.f), glm::vec3(0.0f, 0.0f, 1.0f));//rotacja bryly
-		view = glm::translate(view, glm::vec3(30.0f, 70.0f, -250.0f));//ustawienie kamery w ukladzie wspolrzednych
-		view = glm::rotate(view, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)); // Obróæ kamerê w przestrzeni
-		projection = glm::perspective(glm::radians(45.0f), static_cast<float>(mode->width) / static_cast<float>(mode->height), 0.1f, 1000.0f);
+		// Transformacja kamery
+		//iloraz przyblizenia kamery do obiektu
+		float radius = 300.0f;
+		float camX = static_cast<float>(sin(glfwGetTime()) * radius);
+		float camZ = static_cast<float>(cos(glfwGetTime()) * radius);
+		float camY = static_cast<float>(sin(glfwGetTime()) * radius);
+		//wartoœæ y to wysokosc kamery
+		camera.Position = glm::vec3(camX, -100.0f, camZ);
+		glm::vec3 cameraDirection = glm::normalize(camera.Position - cameraTarget);
+		camera.Front = -cameraDirection;  // Ustawienie kierunku kamery
 
+		// Tworzenie transformacji
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), static_cast<float>(mode->width) / static_cast<float>(mode->height), 0.1f, 1000.0f);
+		glm::mat4 view = camera.GetViewMatrix();  // Uzyskanie macierzy widoku z kamery
 
 		shaderProgram.setMat4("model", model);
 		shaderProgram.setMat4("view", view);
