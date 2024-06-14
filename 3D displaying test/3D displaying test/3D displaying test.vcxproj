@@ -153,6 +153,7 @@
     <ClCompile Include="Dependencies\Imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="Dependencies\Imgui\imgui_tables.cpp" />
     <ClCompile Include="Dependencies\Imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Lamp.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Shaders.cpp" />
@@ -463,6 +464,7 @@
     <ClInclude Include="Dependencies\KHR\khrplatform.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Imgui\imgui.h" />
+    <ClInclude Include="Lamp.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Shaders.h" />
   </ItemGroup>

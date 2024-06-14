@@ -233,7 +233,7 @@ int main()
 		shaderCube.setMat4("view", view);
 		glm::mat4 lamp = glm::mat4(1.0f);
 		lamp = glm::translate(lamp, lightPos);
-		lamp = glm::scale(lamp, glm::vec3(10.0f)); // wiêksza skala lampy
+		lamp = glm::scale(lamp, glm::vec3(40.0f)); // wiêksza skala lampy
 		shaderCube.setMat4("model", lamp);
 
 		// Zak³adaj¹c, ¿e masz szeœcian z 36 wierzcho³kami
