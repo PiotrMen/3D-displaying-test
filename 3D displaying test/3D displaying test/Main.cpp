@@ -14,7 +14,7 @@
 #include "shaders.h"
 #include "Model.h"
 #include "Camera.h"
-
+#include "Lamp.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -72,52 +72,6 @@ int main()
 	Model modelObj("3d files/figure_Hollow_Supp.stl");
 	Camera camera(glm::vec3(0.0f, 0.0f, 10.0f));
 
-	// Define and initialize the cube model
-	std::vector<Vertex> cubeVertices = {
-	{{-0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, {1.0f, 1.0f, 1.0f}},
-	{{ 0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, {1.0f, 1.0f, 1.0f}},
-	{{ 0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, {1.0f, 1.0f, 1.0f}},
-	{{ 0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, {1.0f, 1.0f, 1.0f}},
-	{{-0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, {1.0f, 1.0f, 1.0f}},
-	{{-0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, {1.0f, 1.0f, 1.0f}},
-
-	{{-0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, {1.0f, 1.0f, 1.0f}},
-	{{ 0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, {1.0f, 1.0f, 1.0f}},
-	{{ 0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, {1.0f, 1.0f, 1.0f}},
-	{{ 0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, {1.0f, 1.0f, 1.0f}},
-	{{-0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, {1.0f, 1.0f, 1.0f}},
-	{{-0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}, {1.0f, 1.0f, 1.0f}},
-
-	{{-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}, {1.0f, 1.0f, 1.0f}},
-	{{-0.5f,  0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}, {1.0f, 1.0f, 1.0f}},
-	{{-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}, {1.0f, 1.0f, 1.0f}},
-	{{-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}, {1.0f, 1.0f, 1.0f}},
-	{{-0.5f, -0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}, {1.0f, 1.0f, 1.0f}},
-	{{-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}, {1.0f, 1.0f, 1.0f}},
-
-	{{ 0.5f,  0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f}, {1.0f, 1.0f, 1.0f}},
-	{{ 0.5f,  0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f}, {1.0f, 1.0f, 1.0f}},
-	{{ 0.5f, -0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f}, {1.0f, 1.0f, 1.0f}},
-	{{ 0.5f, -0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f}, {1.0f, 1.0f, 1.0f}},
-	{{ 0.5f, -0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f}, {1.0f, 1.0f, 1.0f}},
-	{{ 0.5f,  0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f}, {1.0f, 1.0f, 1.0f}},
-
-	{{-0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}, {1.0f, 1.0f, 1.0f}},
-	{{ 0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}, {1.0f, 1.0f, 1.0f}},
-	{{ 0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f}, {1.0f, 1.0f, 1.0f}},
-	{{ 0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f}, {1.0f, 1.0f, 1.0f}},
-	{{-0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f}, {1.0f, 1.0f, 1.0f}},
-	{{-0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}, {1.0f, 1.0f, 1.0f}},
-
-	{{-0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}, {1.0f, 1.0f, 1.0f}},
-	{{ 0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}, {1.0f, 1.0f, 1.0f}},
-	{{ 0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f}, {1.0f, 1.0f, 1.0f}},
-	{{ 0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f}, {1.0f, 1.0f, 1.0f}},
-	{{-0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f}, {1.0f, 1.0f, 1.0f}},
-	{{-0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}, {1.0f, 1.0f, 1.0f}}
-	};
-	Model cubeModel(cubeVertices);
-
 	glEnable(GL_DEPTH_TEST);
 
 	// Create framebuffer
@@ -145,9 +99,9 @@ int main()
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+	//Lokazja, oraz rozmiar
+	Lamp cube(150.0f, -150.0f, 0.0f, glm::vec3(10.0f));
 	glm::vec3 cameraTarget = glm::vec3(0.0f, -100.0f, 0.0f);
-	glm::vec3 lightPos(150.0f, -150.0f, 0.0f);
 	// Ustawianie macierzy modelu
 	modelObj.setModelMatrix(glm::translate(modelObj.getModelMatrix(), glm::vec3(0.0f, 0.0f, 0.0f))); // ustawienie bry³y w uk³adzie
 	modelObj.setModelMatrix(glm::rotate(modelObj.getModelMatrix(), glm::radians(90.f), glm::vec3(1.0f, 0.0f, 0.0f))); // rotacja bry³y mo¿liwa równie¿ przez obrot kamery wektor "Front"
@@ -218,7 +172,7 @@ int main()
 		shaderProgram.setFloat("gradientPow", 7.0);
 
 		//lightingShader
-		shaderProgram.setVec3("lightPos", lightPos);
+		shaderProgram.setVec3("lightPos", cube.getLightPos());
 		shaderProgram.setVec3("viewPos", camera.Position);
 		shaderProgram.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
 		shaderProgram.setVec3("objectColor", glm::vec3(0.5f, 0.5f, 0.5f));
@@ -231,13 +185,10 @@ int main()
 		shaderCube.use();
 		shaderCube.setMat4("projection", projection);
 		shaderCube.setMat4("view", view);
-		glm::mat4 lamp = glm::mat4(1.0f);
-		lamp = glm::translate(lamp, lightPos);
-		lamp = glm::scale(lamp, glm::vec3(40.0f)); // wiêksza skala lampy
-		shaderCube.setMat4("model", lamp);
+		shaderCube.setMat4("model", cube.getLamp());
 
 		// Zak³adaj¹c, ¿e masz szeœcian z 36 wierzcho³kami
-		cubeModel.bind();
+		cube.getModel().bind();
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		// Second pass: render the framebuffer texture to the default framebuffer

@@ -1,7 +1,7 @@
 #include "Lamp.h"
 
-void Lamp::_createVertices() {
-	this->_cubeVertices = {
+std::vector<Vertex> Lamp::_createVertices() {
+	return{
 	{{-0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, {1.0f, 1.0f, 1.0f}},
 	{{ 0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, {1.0f, 1.0f, 1.0f}},
 	{{ 0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}, {1.0f, 1.0f, 1.0f}},
@@ -44,5 +44,15 @@ void Lamp::_createVertices() {
 	{{-0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f}, {1.0f, 1.0f, 1.0f}},
 	{{-0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}, {1.0f, 1.0f, 1.0f}}
 	};
-
 }
+Model Lamp::getModel() {
+	return this->_model;
+}
+
+glm::vec3 Lamp::getLightPos() const{
+	return this->_lightPos;
+};
+glm::mat4 Lamp::getLamp() const {
+	return this->_lamp;
+};
+
