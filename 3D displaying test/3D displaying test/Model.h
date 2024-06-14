@@ -13,7 +13,8 @@ struct Vertex {
 class Model
 {
 public:
-    Model(const std::string& path);
+    explicit Model(const std::string& path);
+    explicit Model(const std::vector<Vertex>& verticies);
     void bind() const;
     const std::vector<Vertex>& getVertices() const;
     void cleanup();
