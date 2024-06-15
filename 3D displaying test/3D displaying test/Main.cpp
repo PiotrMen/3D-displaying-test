@@ -100,12 +100,13 @@ int main()
 		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//Lokazja, oraz rozmiar
-	Lamp cube(150.0f, -150.0f, 0.0f, glm::vec3(10.0f));
+	Lamp cube(250.0f, -20.0f, 100.0f, glm::vec3(20.0f));
+	Lamp basicCube(0.0f, 0.0f, 0.0f, glm::vec3(80.0f));
 	glm::vec3 cameraTarget = glm::vec3(0.0f, -100.0f, 0.0f);
 	// Ustawianie macierzy modelu
-	modelObj.setModelMatrix(glm::translate(modelObj.getModelMatrix(), glm::vec3(0.0f, 0.0f, 0.0f))); // ustawienie bry³y w uk³adzie
+	modelObj.setModelMatrix(glm::translate(modelObj.getModelMatrix(), glm::vec3(0.0f, 1000.0f, 0.0f))); // ustawienie bry³y w uk³adzie
 	modelObj.setModelMatrix(glm::rotate(modelObj.getModelMatrix(), glm::radians(90.f), glm::vec3(1.0f, 0.0f, 0.0f))); // rotacja bry³y mo¿liwa równie¿ przez obrot kamery wektor "Front"
-
+	modelObj.setModelMatrix(glm::scale(modelObj.getModelMatrix(), glm::vec3(1.0f)));
 	// Render loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -181,6 +182,17 @@ int main()
 		shaderProgram.setFloat("specularStrength", specularStrength);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDrawArrays(GL_TRIANGLES, 0, modelObj.getVertices().size());
+
+		
+		shaderProgram.use();
+		shaderProgram.setMat4("projection", projection);
+		shaderProgram.setMat4("view", view);
+		shaderProgram.setMat4("model", basicCube.getLamp());
+
+		// Zak³adaj¹c, ¿e masz szeœcian z 36 wierzcho³kami
+		basicCube.getModel().bind();
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
 
 		shaderCube.use();
 		shaderCube.setMat4("projection", projection);

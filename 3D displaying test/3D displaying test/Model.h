@@ -20,7 +20,6 @@ public:
     void cleanup();
     glm::mat4 getModelMatrix() const noexcept;
     glm::mat4 setModelMatrix(const glm::mat4& modelToSet) noexcept;
-
 private:
     void setupModel();
     void loadModel();
@@ -31,6 +30,4 @@ private:
     std::vector<Vertex> _vertices;
     glm::mat4 _model;
 };
-
-// void setModelViewProjection(unsigned int shaderProgram, const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection);
 
