@@ -100,7 +100,7 @@ int main()
 		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//Lokazja, oraz rozmiar
-	Cube cube(150.0f, -150.0f, 0.0f, glm::vec3(20.0f));
+	Cube cube(50.0f, -50.0f, 0.0f, glm::vec3(20.0f));
 	Cube basicCube(0.0f, 0.0f, 0.0f, glm::vec3(20.0f));
 	glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 	// Ustawianie macierzy modelu

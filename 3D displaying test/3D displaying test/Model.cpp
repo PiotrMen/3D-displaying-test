@@ -65,7 +65,7 @@ Model::Model(const std::string& path) : _path(path), _VAO(0), _VBO(0), _model(gl
     this->setupModel();
 }
 
-Model::Model(const std::vector<Vertex>& verticies) : _vertices(verticies)
+Model::Model(const std::vector<Vertex>& verticies) : _vertices(verticies), _VAO(0), _VBO(0), _model(glm::mat4(1.f))
 {
     this->setupModel();
 }
