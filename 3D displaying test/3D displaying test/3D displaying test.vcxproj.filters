@@ -72,7 +72,7 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Lamp.cpp">
+    <ClCompile Include="Cube.cpp">
       <Filter>Light</Filter>
     </ClCompile>
   </ItemGroup>
@@ -998,7 +998,7 @@
     <ClInclude Include="Camera.h">
       <Filter>Camera</Filter>
     </ClInclude>
-    <ClInclude Include="Lamp.h">
+    <ClInclude Include="Cube.h">
       <Filter>Light</Filter>
     </ClInclude>
   </ItemGroup>
