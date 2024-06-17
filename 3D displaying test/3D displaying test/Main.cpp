@@ -176,8 +176,23 @@ int main()
 		}else {
 			elementUsagePercentage = 100.0f;
 		}
-		ShaderProgram* currentShader = (selectedShader == 0) ? &shaderGradientProgram : &shaderLightProgram;
 
+		ShaderProgram* currentShader = (selectedShader == 0) ? &shaderGradientProgram : &shaderLightProgram;
+		// Set rendering mode
+		if (selectedShader == 1) {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+		else {
+			if (selectedRenderingMode == 0) {
+				glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+			}
+			else if (selectedRenderingMode == 1) {
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			}
+			else if (selectedRenderingMode == 2) {
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			}
+		}
 		// Draw the model
 		currentShader->use();
 
@@ -216,16 +231,9 @@ int main()
 			currentShader->setFloat("maxDistance", radius);
 			currentShader->setFloat("gradientPow", 7.0);
 		}
-		// Set rendering mode
-		if (selectedRenderingMode == 0) {
-			glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
-		}
-		else if (selectedRenderingMode == 1) {
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		}
-		else if (selectedRenderingMode == 2) {
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		}
+		
+
+
 		// Render the selected object with element usage percentage
 		int vertexCount = static_cast<int>(modelObj.getVertices().size() * (elementUsagePercentage / 100.0f));
 		//ustawienie modeli
