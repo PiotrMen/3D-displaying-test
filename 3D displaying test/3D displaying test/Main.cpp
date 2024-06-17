@@ -64,8 +64,8 @@ int main()
 	ImGui_ImplOpenGL3_Init("#version 330");
 
 	// Build and compile our shader program
-	//ShaderProgram shaderProgram(Shader(GL_VERTEX_SHADER, "shaders/Gradient_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/Gradient_fragment_shader.glsl"));
-	ShaderProgram shaderProgram(Shader(GL_VERTEX_SHADER, "shaders/ligthing_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/ligthing_fragment_shader.glsl"));
+	ShaderProgram shaderGradientProgram(Shader(GL_VERTEX_SHADER, "shaders/Gradient_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/Gradient_fragment_shader.glsl"));
+	ShaderProgram shaderLightProgram(Shader(GL_VERTEX_SHADER, "shaders/ligthing_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/ligthing_fragment_shader.glsl"));
 	ShaderProgram shaderCube(Shader(GL_VERTEX_SHADER, "shaders/cube_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/cube_fragment_shader.glsl"));
 
 	// Load model
@@ -100,13 +100,29 @@ int main()
 		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//Lokazja, oraz rozmiar
-	Cube cube(50.0f, -50.0f, 0.0f, glm::vec3(20.0f));
-	Cube basicCube(0.0f, 0.0f, 0.0f, glm::vec3(20.0f));
+	Cube lightcube(250.0f, -80.0f, 100.0f, glm::vec3(20.0f));
+	Cube basicCube(0.0f, 0.0f, 0.0f, glm::vec3(80.0f));
 	glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 	// Ustawianie macierzy modelu
-	modelObj.setModelMatrix(glm::translate(modelObj.getModelMatrix(), glm::vec3(0.0f, 1000.0f, 0.0f))); // ustawienie bry³y w uk³adzie
+	modelObj.setModelMatrix(glm::translate(modelObj.getModelMatrix(), glm::vec3(0.0f, 0.0f, 0.0f))); // ustawienie bry³y w uk³adzie
 	modelObj.setModelMatrix(glm::rotate(modelObj.getModelMatrix(), glm::radians(90.f), glm::vec3(1.0f, 0.0f, 0.0f))); // rotacja bry³y mo¿liwa równie¿ przez obrot kamery wektor "Front"
 	modelObj.setModelMatrix(glm::scale(modelObj.getModelMatrix(), glm::vec3(1.0f)));
+
+	// Array of shader names
+	const char* shaderNames[] = { "Gradient Shader", "Lighting Shader" };
+	int selectedShader = 0;
+	// Array of object names
+	const char* objectNames[] = { "Model", "Cube" };
+	int selectedObject = 0;
+	// Array of rendering mode names
+	const char* renderingModeNames[] = { "Point Cloud", "Wireframe", "Filled" };
+	int selectedRenderingMode = 2; // Default to filled
+	// Variables for light properties
+	static float ambientStrength = 0.1f;
+	static float diffuseStrength = 0.4f;
+	static float specularStrength = 0.7f;
+	// Variable for percentage of used element
+	static float elementUsagePercentage = 100.0f;
 	// Render loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -131,12 +147,43 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		// ImGui Radio buttons do wyboru shaderów
+		ImGui::PushItemWidth(150);  // Ustaw szerokoœæ na 150 pikseli
+		if (ImGui::RadioButton("Gradient Shader", selectedShader == 0)) selectedShader = 0;
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Lighting Shader", selectedShader == 1)) selectedShader = 1;
+		// Display sliders only if Lighting Shader is selected
+		if (selectedShader == 1) {
+			ImGui::SliderFloat("Ambient Strength", &ambientStrength, 0.0f, 1.0f);
+			ImGui::SliderFloat("Diffuse Strength", &diffuseStrength, 0.0f, 1.0f);
+			ImGui::SliderFloat("Specular Strength", &specularStrength, 0.0f, 1.0f);
+		}
+
+		// ImGui radio buttons for object selection
+		ImGui::PushItemWidth(150);  // Set width to 150 pixels
+		if (ImGui::RadioButton("Model", selectedObject == 0)) selectedObject = 0;
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Cube", selectedObject == 1)) selectedObject = 1;
+
+		// ImGui radio buttons for rendering mode selection
+		if (selectedShader == 0) {
+			ImGui::RadioButton("Point Cloud", &selectedRenderingMode, 0);
+			ImGui::SameLine();
+			ImGui::RadioButton("Wireframe", &selectedRenderingMode, 1);
+			ImGui::SameLine();
+			ImGui::RadioButton("Filled", &selectedRenderingMode, 2);
+			ImGui::SliderFloat("Element Usage (%)", &elementUsagePercentage, 0.0f, 100.0f);
+		}else {
+			elementUsagePercentage = 100.0f;
+		}
+		ShaderProgram* currentShader = (selectedShader == 0) ? &shaderGradientProgram : &shaderLightProgram;
+
 		// Draw the model
-		shaderProgram.use();
+		currentShader->use();
 
 		// Transformacja kamery
 		//iloraz przyblizenia kamery do obiektu
-		float radius = 300.0f;
+		float radius = 400.0f;
 		float camX = static_cast<float>(sin(glfwGetTime()) * radius);
 		float camZ = static_cast<float>(cos(glfwGetTime()) * radius);
 		float camY = static_cast<float>(sin(glfwGetTime()) * radius);
@@ -148,60 +195,60 @@ int main()
 		// Tworzenie transformacji
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), static_cast<float>(mode->width) / static_cast<float>(mode->height), 0.1f, 1000.0f);
 		glm::mat4 view = camera.GetViewMatrix();  // Uzyskanie macierzy widoku z kamery
+
+		// Set common shader uniforms
+		currentShader->setMat4("projection", projection);
+		currentShader->setMat4("view", view);
+		currentShader->setVec3("cameraPos", camera.Position);
+
+		//ustawienie shaderow
+		if (selectedShader == 1) {
+			//lightingShader
+			currentShader->setVec3("lightPos", lightcube.getCubePos());
+			currentShader->setVec3("viewPos", camera.Position);
+			currentShader->setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+			currentShader->setVec3("objectColor", glm::vec3(0.5f, 0.5f, 0.5f));
+			currentShader->setFloat("ambientStrength", ambientStrength);
+			currentShader->setFloat("diffuseStrength", diffuseStrength);
+			currentShader->setFloat("specularStrength", specularStrength);
+		}else if (selectedShader == 0) {
+			//Gradient shader
+			currentShader->setFloat("maxDistance", radius);
+			currentShader->setFloat("gradientPow", 7.0);
+		}
+		// Set rendering mode
+		if (selectedRenderingMode == 0) {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+		}
+		else if (selectedRenderingMode == 1) {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
+		else if (selectedRenderingMode == 2) {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+		// Render the selected object with element usage percentage
+		int vertexCount = static_cast<int>(modelObj.getVertices().size() * (elementUsagePercentage / 100.0f));
+		//ustawienie modeli
+		if (selectedObject == 0) {
+			modelObj.bind();
+			currentShader->setMat4("model", modelObj.getModelMatrix());
+			glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+		}else if (selectedObject == 1) {		
+			currentShader->setMat4("model", basicCube.getCubeModel().getModelMatrix());
+			basicCube.getCubeModel().bind();
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 		
-		static float ambientStrength = 0.1f;
-		ImGui::Begin("Light slider");
-		ImGui::SliderFloat("ambientStrength", &ambientStrength, 0.0f, 1.0f);
-		ImGui::Text("Value: %.3f", ambientStrength);
-		//ImGui::SameLine();
+		if (selectedShader == 1) {
+			shaderCube.use();
+			shaderCube.setMat4("projection", projection);
+			shaderCube.setMat4("view", view);
+			shaderCube.setMat4("model", lightcube.getCubeModel().getModelMatrix());
 
-		static float diffuseStrength = 0.5f;
-		ImGui::SliderFloat("diffuseStrength", &diffuseStrength, 0.0f, 1.0f);
-		ImGui::Text("Value: %.3f", diffuseStrength);
-
-		static float specularStrength = 0.5f;
-		ImGui::SliderFloat("specularStrength", &specularStrength, 0.0f, 1.0f);
-		ImGui::Text("Value: %.3f", specularStrength);
-		ImGui::End();
-		modelObj.bind();
-		//Gradient shader
-		shaderProgram.setMat4("model", modelObj.getModelMatrix());
-		shaderProgram.setMat4("view", view);
-		shaderProgram.setMat4("projection", projection);
-		shaderProgram.setVec3("cameraPos", camera.Position);
-		shaderProgram.setFloat("maxDistance", radius);
-		shaderProgram.setFloat("gradientPow", 7.0);
-
-		//lightingShader
-		shaderProgram.setVec3("lightPos", cube.getCubePos());
-		shaderProgram.setVec3("viewPos", camera.Position);
-		shaderProgram.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-		shaderProgram.setVec3("objectColor", glm::vec3(0.5f, 0.5f, 0.5f));
-		shaderProgram.setFloat("ambientStrength", ambientStrength);
-		shaderProgram.setFloat("diffuseStrength", diffuseStrength);
-		shaderProgram.setFloat("specularStrength", specularStrength);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		glDrawArrays(GL_TRIANGLES, 0, modelObj.getVertices().size());
-
-		
-		shaderProgram.use();
-		shaderProgram.setMat4("projection", projection);
-		shaderProgram.setMat4("view", view);
-		shaderProgram.setMat4("model", basicCube.getCubeModel().getModelMatrix());
-
-		// Zak³adaj¹c, ¿e masz szeœcian z 36 wierzcho³kami
-		basicCube.getCubeModel().bind();
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-
-		shaderCube.use();
-		shaderCube.setMat4("projection", projection);
-		shaderCube.setMat4("view", view);
-		shaderCube.setMat4("model", cube.getCubeModel().getModelMatrix());
-
-		// Zak³adaj¹c, ¿e masz szeœcian z 36 wierzcho³kami
-		cube.getCubeModel().bind();
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+			// Zak³adaj¹c, ¿e masz szeœcian z 36 wierzcho³kami
+			lightcube.getCubeModel().bind();
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 
 		// Second pass: render the framebuffer texture to the default framebuffer
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
