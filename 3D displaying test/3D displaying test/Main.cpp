@@ -81,9 +81,12 @@ int main()
 	Cube basicCube(0.0f, 0.0f, 0.0f, glm::vec3(80.0f));
 	glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 	// Ustawianie macierzy modelu
-	modelObj.setModelMatrix(glm::translate(modelObj.getModelMatrix(), glm::vec3(0.0f, 0.0f, 0.0f))); // ustawienie bry³y w uk³adzie
-	modelObj.setModelMatrix(glm::rotate(modelObj.getModelMatrix(), glm::radians(90.f), glm::vec3(1.0f, 0.0f, 0.0f))); // rotacja bry³y mo¿liwa równie¿ przez obrot kamery wektor "Front"
-	modelObj.setModelMatrix(glm::scale(modelObj.getModelMatrix(), glm::vec3(1.0f)));
+	//modelObj.setModelMatrix(glm::translate(modelObj.getModelMatrix(), glm::vec3(0.0f, 0.0f, 0.0f))); // ustawienie bry³y w uk³adzie
+	modelObj.translate(glm::vec3(0.0f, 0.0f, 0.0f));
+	modelObj.rotate(glm::radians(90.f), glm::vec3(1.0f, 0.0f, 0.0f));
+	//modelObj.setModelMatrix(glm::rotate(modelObj.getModelMatrix(), glm::radians(90.f), glm::vec3(1.0f, 0.0f, 0.0f))); // rotacja bry³y mo¿liwa równie¿ przez obrot kamery wektor "Front"
+	//modelObj.setModelMatrix(glm::scale(modelObj.getModelMatrix(), glm::vec3(1.0f)));
+	modelObj.scale(glm::vec3(1.0f));
 
 	// Array of shader names
 	const char* shaderNames[] = { "Gradient Shader", "Lighting Shader" };
@@ -124,12 +127,11 @@ int main()
 		// Clear the color and depth buffer for the outer window
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// First pass: render the scene to the framebuffer
 		glBindFramebuffer(GL_FRAMEBUFFER, object3DDisplayer.getFrameBuffer());
 		glEnable(GL_DEPTH_TEST);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
 		// ImGui Radio buttons do wyboru shaderów
 		if (ImGui::RadioButton("Gradient Shader", selectedShader == 0)) selectedShader = 0;
@@ -167,6 +169,7 @@ int main()
 				lastTime = glfwGetTime();  // Reset current time when enabling rotation
 			}
 		}
+		// First pass: render the scene to the framebuffer
 		ShaderProgram* currentShader = (selectedShader == 0) ? &shaderGradientProgram : &shaderLightProgram;
 		// Set rendering mode
 		if (selectedShader == 1) {
@@ -234,8 +237,8 @@ int main()
 			currentShader->setMat4("model", modelObj.getModelMatrix());
 			glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 		}else if (selectedObject == 1) {		
-			currentShader->setMat4("model", basicCube.getCubeModel().getModelMatrix());
-			basicCube.getCubeModel().bind();
+			currentShader->setMat4("model", basicCube.getCubeModel()->getModelMatrix());
+			basicCube.getCubeModel()->bind();
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 		
@@ -243,10 +246,10 @@ int main()
 			shaderCube.use();
 			shaderCube.setMat4("projection", projection);
 			shaderCube.setMat4("view", view);
-			shaderCube.setMat4("model", lightcube.getCubeModel().getModelMatrix());
+			shaderCube.setMat4("model", lightcube.getCubeModel()->getModelMatrix());
 
 			// Zak³adaj¹c, ¿e masz szeœcian z 36 wierzcho³kami
-			lightcube.getCubeModel().bind();
+			lightcube.getCubeModel()->bind();
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
@@ -269,7 +272,7 @@ int main()
 	}
 
 	// Cleanup
-	modelObj.cleanup();
+	//modelObj.cleanup();
 	//glDeleteProgram(shaderProgram);
 
 	ImGui_ImplOpenGL3_Shutdown();
