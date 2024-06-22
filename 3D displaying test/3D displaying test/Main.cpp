@@ -121,8 +121,15 @@ int main()
 	static float ambientStrength = 0.1f;
 	static float diffuseStrength = 0.4f;
 	static float specularStrength = 0.7f;
+	//skala promienia
+	static float radius = 400.0f;
 	// Variable for percentage of used element
 	static float elementUsagePercentage = 100.0f;
+	// Variable to control camera rotation
+	bool rotateCamera = true;
+	static float currentTime = 0.0f;
+	static float cameraAngle = 0.0f;
+	static float lastTime = 0.0f;
 	// Render loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -148,7 +155,6 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// ImGui Radio buttons do wyboru shaderów
-		ImGui::PushItemWidth(150);  // Ustaw szerokoœæ na 150 pikseli
 		if (ImGui::RadioButton("Gradient Shader", selectedShader == 0)) selectedShader = 0;
 		ImGui::SameLine();
 		if (ImGui::RadioButton("Lighting Shader", selectedShader == 1)) selectedShader = 1;
@@ -172,11 +178,18 @@ int main()
 			ImGui::RadioButton("Wireframe", &selectedRenderingMode, 1);
 			ImGui::SameLine();
 			ImGui::RadioButton("Filled", &selectedRenderingMode, 2);
+			ImGui::PushItemWidth(1000);  // Ustaw szerokoœæ na 150 pikseli
 			ImGui::SliderFloat("Element Usage (%)", &elementUsagePercentage, 0.0f, 100.0f);
 		}else {
 			elementUsagePercentage = 100.0f;
 		}
-
+		// Add a button to toggle camera rotation
+		if (ImGui::Button("Camera Rotation")) {
+			rotateCamera = !rotateCamera;
+			if (rotateCamera) {
+				lastTime = glfwGetTime();  // Reset current time when enabling rotation
+			}
+		}
 		ShaderProgram* currentShader = (selectedShader == 0) ? &shaderGradientProgram : &shaderLightProgram;
 		// Set rendering mode
 		if (selectedShader == 1) {
@@ -197,13 +210,15 @@ int main()
 		currentShader->use();
 
 		// Transformacja kamery
-		//iloraz przyblizenia kamery do obiektu
-		float radius = 400.0f;
-		float camX = static_cast<float>(sin(glfwGetTime()) * radius);
-		float camZ = static_cast<float>(cos(glfwGetTime()) * radius);
-		float camY = static_cast<float>(sin(glfwGetTime()) * radius);
-		//wartoœæ y to wysokosc kamery
-		camera.Position = glm::vec3(camX, -100.0f, camZ);
+		if (rotateCamera) {
+			float currentTime = glfwGetTime();
+			cameraAngle += (currentTime - lastTime);  // Aktualizacja k¹ta kamery na podstawie up³ywu czasu
+			lastTime = currentTime;  // Aktualizacja ostatniego czasu
+			float camX = static_cast<float>(sin(cameraAngle) * radius);
+			float camZ = static_cast<float>(cos(cameraAngle) * radius);
+			float camY = static_cast<float>(sin(cameraAngle) * radius);
+			camera.Position = glm::vec3(camX, -100.0f, camZ);  //wartoœæ y to wysokosc kamery
+		}
 		glm::vec3 cameraDirection = glm::normalize(camera.Position - cameraTarget);
 		camera.Front = -cameraDirection;  // Ustawienie kierunku kamery
 
