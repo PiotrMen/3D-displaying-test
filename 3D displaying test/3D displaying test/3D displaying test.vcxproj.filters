@@ -31,6 +31,9 @@
     <Filter Include="Light">
       <UniqueIdentifier>{8246cc32-1ce6-43ff-a1a9-f322d5bcd780}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ImageModeDisplayer">
+      <UniqueIdentifier>{67e8e54e-719e-4274-b9ed-cdbfbaad59ab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -74,6 +77,9 @@
     </ClCompile>
     <ClCompile Include="Cube.cpp">
       <Filter>Light</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageModeDisplayer.cpp">
+      <Filter>ImageModeDisplayer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1000,6 +1006,9 @@
     </ClInclude>
     <ClInclude Include="Cube.h">
       <Filter>Light</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageModeDisplayer.h">
+      <Filter>ImageModeDisplayer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
