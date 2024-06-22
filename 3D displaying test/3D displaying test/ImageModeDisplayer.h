@@ -29,11 +29,14 @@ protected:
 };
 
 class Object3DDisplayer
-	:public ImageModeDisplayer
+	//:public ImageModeDisplayer
 {
 public:
 	Object3DDisplayer(int width, int height);
 	~Object3DDisplayer();
+
+	unsigned int getFrameBuffer()const;
+	unsigned int getTexColorBuffer()const;
 
 private:
 	unsigned int _framebuffer{};

@@ -42,3 +42,19 @@ Object3DDisplayer::Object3DDisplayer(int width, int height) : _width(width), _he
 		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+
+Object3DDisplayer::~Object3DDisplayer()
+{
+	glDeleteFramebuffers(1, &this->_framebuffer);
+	glDeleteTextures(1, &this->_texColorBuffer);
+	glDeleteRenderbuffers(1, &this->_rbo);
+}
+
+unsigned int Object3DDisplayer::getFrameBuffer()const
+{
+	return this->_framebuffer;
+}
+unsigned int Object3DDisplayer::getTexColorBuffer()const
+{
+	return this->_texColorBuffer;
+}

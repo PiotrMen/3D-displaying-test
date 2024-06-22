@@ -2,7 +2,6 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
-#include <glad/glad.h>
 #include<vector>
 #include"Model.h"
 
@@ -18,7 +17,7 @@ public:
 		this->_model.setModelMatrix(glm::scale(this->_model.getModelMatrix(), _size));
 	}
 	glm::vec3 getCubePos()const;
-	Model getCubeModel();
+	Model getCubeModel()const;
 private:
 	std::vector<Vertex> _createVertices();
 	glm::vec3 _cubePos;
