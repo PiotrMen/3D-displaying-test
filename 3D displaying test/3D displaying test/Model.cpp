@@ -62,11 +62,6 @@ Model::Model(const std::vector<Vertex>& verticies) : _vertices(verticies), _VAO(
     this->setupModel();
 }
 
-Model::~Model()
-{
-	this->cleanup();
-}
-
 void Model::bind() const
 {
     glBindVertexArray(this->_VAO);
@@ -86,20 +81,3 @@ glm::mat4 Model::setModelMatrix(const glm::mat4& modelToSet) noexcept
 {
     return this->_model = modelToSet;
 }
-
-void Model::translate(const glm::vec3& translationVector)
-{
-    this->_model = glm::translate(this->getModelMatrix(), translationVector);
-}
-
-void Model::rotate(float angle, const glm::vec3& rotationVector)
-{
-    this->_model = glm::rotate(this->getModelMatrix(), angle, rotationVector);
-}
-
-void Model::scale(const glm::vec3& scalingRatio)
-{
-    this->_model = glm::scale(this->getModelMatrix(), scalingRatio);
-
-}
-

@@ -5,11 +5,10 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include "opencv2/opencv.hpp"
-#include "Model.h"
 
 enum class DisplayingImageModes {
 	FitSizeToMax,
-	Zoomable,
+	Zoomable
 };
 
 class ImageModeDisplayer
@@ -18,7 +17,6 @@ public:
 	virtual const ImVec2 calculateDisplayedImgSize(const cv::Mat& displayedImg) = 0;
 	virtual const ImVec2 calculatePosDisplayedImg(const ImVec2& maxAvailableImgSize) const = 0;
 	virtual void display(const cv::Mat& displayedImg, GLuint _ImageTexture) = 0;
-	virtual void display(const Model& displayedImg) = 0;
 	virtual DisplayingImageModes getDisplayingMode() const noexcept = 0;
 	double getScale() const;
 

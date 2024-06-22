@@ -22,17 +22,12 @@ class Model
 public:
     explicit Model(const std::string& path);
     explicit Model(const std::vector<Vertex>& verticies);
-    ~Model();
     void bind() const;
     const std::vector<Vertex>& getVertices() const;
+    void cleanup();
     glm::mat4 getModelMatrix() const noexcept;
     glm::mat4 setModelMatrix(const glm::mat4& modelToSet) noexcept;
-
-    void translate(const glm::vec3& translationVector);
-    void rotate(float angle, const glm::vec3& axisDirecton);
-    void scale(const glm::vec3& scalingRatio);
 private:
-    void cleanup();
     void setupModel();
     void loadModel();
 

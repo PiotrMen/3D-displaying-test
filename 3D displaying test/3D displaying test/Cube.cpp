@@ -45,7 +45,7 @@ std::vector<Vertex> Cube::_createVertices() {
 	{{-0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}, {1.0f, 1.0f, 1.0f}}
 	};
 }
-std::shared_ptr<Model> Cube::getCubeModel() const{
+Model Cube::getCubeModel() const{
 	return this->_model;
 }
 
