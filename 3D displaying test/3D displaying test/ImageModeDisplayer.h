@@ -1,9 +1,9 @@
 #pragma once
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
-#include <glad/glad.h>
 #include "opencv2/opencv.hpp"
 
 enum class DisplayingImageModes {
@@ -32,13 +32,13 @@ class Object3DDisplayer
 	:public ImageModeDisplayer
 {
 public:
-	Object3DDisplayer(int width, int height) : _width(width), _height(height) {};
+	Object3DDisplayer(int width, int height);
 	~Object3DDisplayer();
 
 private:
-	unsigned int _framebuffer;
-	unsigned int _texColorBuffer;
-	unsigned int _rbo;
+	unsigned int _framebuffer{};
+	unsigned int _texColorBuffer{};
+	unsigned int _rbo{};
 	int _width;
 	int _height;
 };

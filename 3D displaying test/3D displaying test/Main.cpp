@@ -1,4 +1,8 @@
-#include "ImageModeDisplayer.h"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -11,6 +15,7 @@
 #include "Model.h"
 #include "Camera.h"
 #include "Cube.h"
+#include "ImageModeDisplayer.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
