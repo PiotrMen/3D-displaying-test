@@ -3,6 +3,7 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
+#include <glad/glad.h>
 #include "opencv2/opencv.hpp"
 
 enum class DisplayingImageModes {
@@ -27,14 +28,18 @@ protected:
 	double _scale = 1.0;
 };
 
-class Displayer
+class Object3DDisplayer
 	:public ImageModeDisplayer
 {
 public:
-	Displayer();
-	~Displayer();
+	Object3DDisplayer(int width, int height) : _width(width), _height(height) {};
+	~Object3DDisplayer();
 
 private:
-
+	unsigned int _framebuffer;
+	unsigned int _texColorBuffer;
+	unsigned int _rbo;
+	int _width;
+	int _height;
 };
 
