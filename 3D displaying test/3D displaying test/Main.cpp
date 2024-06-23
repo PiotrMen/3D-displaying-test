@@ -75,6 +75,7 @@ int main()
 	
 
 	Object3DDisplayer object3DDisplayer(mode->width, mode->height);
+	Object3DDisplayer lightDisplayer(mode->width, mode->height);
 
 	//Lokazja, oraz rozmiar
 	Cube lightcube(250.0f, -80.0f, 100.0f, glm::vec3(20.0f));
@@ -224,6 +225,25 @@ int main()
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}*/
 		
+		//if (selectedShader == 1) {
+		//	shaderCube.use();
+		//	shaderCube.setMat4("projection", projection);
+		//	shaderCube.setMat4("view", view);
+		//	shaderCube.setMat4("model", lightcube.getCubeModel()->getModelMatrix());
+
+		//	// Zak³adaj¹c, ¿e masz szeœcian z 36 wierzcho³kami
+		//	lightcube.getCubeModel()->bind();
+		//	glDrawArrays(GL_TRIANGLES, 0, 36);
+		//}
+
+		//// Second pass: render the framebuffer texture to the default framebuffer
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glDisable(GL_DEPTH_TEST);
+
+		ImGui::Image((void*)(intptr_t)object3DDisplayer.getTexColorBuffer(), ImVec2(mode->width, mode->height));
+		ImGui::End();
+
+		ImGui::Begin("3D Light cube");
 		if (selectedShader == 1) {
 			shaderCube.use();
 			shaderCube.setMat4("projection", projection);
@@ -232,14 +252,11 @@ int main()
 
 			// Zak³adaj¹c, ¿e masz szeœcian z 36 wierzcho³kami
 			lightcube.getCubeModel()->bind();
-			glDrawArrays(GL_TRIANGLES, 0, 36);
+			//glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
+		lightDisplayer.display(*lightcube.getCubeModel(), shaderCube, RenderingMode::FILL, 100.0f);
+		ImGui::Image((void*)(intptr_t)lightDisplayer.getTexColorBuffer(), ImVec2(mode->width, mode->height));
 
-		// Second pass: render the framebuffer texture to the default framebuffer
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glDisable(GL_DEPTH_TEST);
-
-		ImGui::Image((void*)(intptr_t)object3DDisplayer.getTexColorBuffer(), ImVec2(mode->width, mode->height));
 		ImGui::End();
 
 		// Rendering

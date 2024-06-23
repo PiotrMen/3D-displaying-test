@@ -57,6 +57,7 @@ void Object3DDisplayer::display(const Model& modelToDisplay, const ShaderProgram
 	modelToDisplay.bind();
 	shaderProgram.setMat4("model", modelToDisplay.getModelMatrix());
 	glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 unsigned int Object3DDisplayer::getFrameBuffer()const
