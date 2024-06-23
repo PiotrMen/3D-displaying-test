@@ -6,7 +6,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-
+#include "Camera.h"
+#include"Model.h"
 class Shader {
 public:
 	explicit Shader(unsigned int type, const std::string& filePath) : _shaderPath(filePath), _type(type), _id(0) {}
@@ -73,3 +74,23 @@ private:
 	unsigned int _id;
 };
 
+class GradientShaderProgram : public ShaderProgram
+{
+public:
+	GradientShaderProgram(const Shader& vertexShader,const Shader& fragmentShader) : ShaderProgram(vertexShader, fragmentShader) {};
+	void setValues(const glm::mat4& projection, const glm::mat4& view, const Camera& camera, float radius) const;
+};
+
+class CubeShaderProgram : public ShaderProgram
+{
+public:
+	CubeShaderProgram(const Shader& vertexShader, const Shader& fragmentShader) : ShaderProgram(vertexShader, fragmentShader) {};
+	void setValues(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model) const;
+};
+
+class ShadowShaderProgram : public ShaderProgram
+{
+public:
+	ShadowShaderProgram(const Shader& vertexShader, const Shader& fragmentShader) : ShaderProgram(vertexShader, fragmentShader) {};
+	void setValues(const glm::mat4& projection, const glm::mat4& view, const Camera& camera, glm::vec3 cubePos, float ambientStrength, float diffuseStrength, float specularStrength) const;
+};

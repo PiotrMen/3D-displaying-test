@@ -3,7 +3,6 @@
 #include <sstream>
 #include <iostream>
 
-
 std::string Shader::readFile()
 {
     std::ifstream file(this->_shaderPath);
@@ -180,5 +179,34 @@ bool ShaderProgram::checkCompileErrors(unsigned int id)
 		return false;
 	}
 	return true;
+}
+
+void GradientShaderProgram::setValues(const glm::mat4& projection, const glm::mat4& view, const Camera& camera, float radius) const
+{
+	this->setMat4("projection", projection);
+	this->setMat4("view", view);
+	this->setVec3("cameraPos", camera.Position);
+	this->setFloat("maxDistance", radius);
+	this->setFloat("gradientPow", 7.0);
+}
+
+void CubeShaderProgram::setValues(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model) const
+{
+	this->setMat4("projection", projection);
+	this->setMat4("view", view);
+	this->setMat4("model", model);
+}
+
+void ShadowShaderProgram::setValues(const glm::mat4& projection, const glm::mat4& view, const Camera& camera, glm::vec3 cubePos,float ambientStrength,float diffuseStrength ,float specularStrength) const
+{
+	this->setMat4("projection", projection);
+	this->setMat4("view", view);
+	this->setVec3("lightPos", cubePos);
+	this->setVec3("viewPos", camera.Position);
+	this->setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+	this->setVec3("objectColor", glm::vec3(0.5f, 0.5f, 0.5f));
+	this->setFloat("ambientStrength", ambientStrength);
+	this->setFloat("diffuseStrength", ambientStrength);
+	this->setFloat("specularStrength", specularStrength);
 }
 

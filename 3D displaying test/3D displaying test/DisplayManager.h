@@ -23,7 +23,7 @@ public:
 		}
 	}
 
-	void displayObject3D(const Model& modelToDisplay, const ShaderProgram& shaderProgram, RenderingMode renderingMode, float elementUsagePercentage) {
+	void displayObject3D(const Model& modelToDisplay, ShaderProgram* shaderProgram, RenderingMode renderingMode, float elementUsagePercentage) {
 		if (currentObject3DDisplayer) {
 			currentObject3DDisplayer->display(modelToDisplay, shaderProgram, renderingMode, elementUsagePercentage);
 		}

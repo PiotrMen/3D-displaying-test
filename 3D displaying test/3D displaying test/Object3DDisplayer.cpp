@@ -36,7 +36,7 @@ Object3DDisplayer::~Object3DDisplayer()
 	glDeleteRenderbuffers(1, &this->_rbo);
 }
 
-void Object3DDisplayer::display(const Model& modelToDisplay, const ShaderProgram& shaderProgram, RenderingMode renderingMode, float elementUsagePercentage)
+void Object3DDisplayer::display(const Model& modelToDisplay, ShaderProgram* shaderProgram, RenderingMode renderingMode, float elementUsagePercentage)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, this->_framebuffer);
 	glEnable(GL_DEPTH_TEST);
@@ -55,7 +55,7 @@ void Object3DDisplayer::display(const Model& modelToDisplay, const ShaderProgram
 	// Render the selected object with element usage percentage
 	int vertexCount = static_cast<int>(modelToDisplay.getVertices().size() * (elementUsagePercentage / 100.0f));
 	modelToDisplay.bind();
-	shaderProgram.setMat4("model", modelToDisplay.getModelMatrix());
+	shaderProgram->setMat4("model", modelToDisplay.getModelMatrix());
 	glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
