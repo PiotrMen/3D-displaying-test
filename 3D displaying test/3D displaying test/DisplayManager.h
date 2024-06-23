@@ -5,7 +5,7 @@
 
 class DisplayManager {
 public:
-	DisplayManager() : currentDisplayer(nullptr), currentImageDisplayer(nullptr), currentObject3DDisplayer(nullptr) { this->setDisplayMode<IImageModeDisplayer>(); }
+	DisplayManager(int width, int height) : currentDisplayer(nullptr), currentImageDisplayer(nullptr), currentObject3DDisplayer(nullptr) { this->setDisplayMode<Object3DDisplayer>(width, height); }
 
 	template <typename DisplayerType, typename... Args>
 	void setDisplayMode(Args&&... args) {
