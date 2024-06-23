@@ -1,21 +1,4 @@
-#include "ImageModeDisplayer.h"
-
-
-double ImageModeDisplayer::getScale() const
-{
-	return this->_scale;
-}
-
-const ImVec2 ImageModeDisplayer::getCurrentDisplayedImgPos() const
-{
-	return this->_topLeftCorner;
-}
-
-const ImVec2 ImageModeDisplayer::getDisplayedImgSize() const
-{
-	return this->_displayedImgSize;
-}
-
+#include "Object3DDisplayer.h"
 Object3DDisplayer::Object3DDisplayer(int width, int height) : _width(width), _height(height) {
 	glEnable(GL_DEPTH_TEST);
 
@@ -48,6 +31,10 @@ Object3DDisplayer::~Object3DDisplayer()
 	glDeleteFramebuffers(1, &this->_framebuffer);
 	glDeleteTextures(1, &this->_texColorBuffer);
 	glDeleteRenderbuffers(1, &this->_rbo);
+}
+
+void Object3DDisplayer::display(const Model& displayedImg)
+{
 }
 
 unsigned int Object3DDisplayer::getFrameBuffer()const

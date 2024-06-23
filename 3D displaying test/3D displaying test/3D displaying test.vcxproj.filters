@@ -31,8 +31,17 @@
     <Filter Include="Light">
       <UniqueIdentifier>{8246cc32-1ce6-43ff-a1a9-f322d5bcd780}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ImageModeDisplayer">
+    <Filter Include="ModeDisplayer">
       <UniqueIdentifier>{67e8e54e-719e-4274-b9ed-cdbfbaad59ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ModeDisplayer\DisplayManager">
+      <UniqueIdentifier>{fa38902b-1305-425e-86e2-7392241ece68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ModeDisplayer\Object3DDisplayer">
+      <UniqueIdentifier>{e1ee0193-f6f1-4af7-81e4-3281f2321cc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ModeDisplayer\2DDisplayer">
+      <UniqueIdentifier>{061ba891-8fe0-48da-b4bf-34603e55f2c1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -78,8 +87,14 @@
     <ClCompile Include="Cube.cpp">
       <Filter>Light</Filter>
     </ClCompile>
-    <ClCompile Include="ImageModeDisplayer.cpp">
-      <Filter>ImageModeDisplayer</Filter>
+    <ClCompile Include="DisplayManager.cpp">
+      <Filter>ModeDisplayer\DisplayManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Object3DDisplayer.cpp">
+      <Filter>ModeDisplayer\Object3DDisplayer</Filter>
+    </ClCompile>
+    <ClCompile Include="IImageModeDisplayer.cpp">
+      <Filter>ModeDisplayer\2DDisplayer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1007,8 +1022,14 @@
     <ClInclude Include="Cube.h">
       <Filter>Light</Filter>
     </ClInclude>
-    <ClInclude Include="ImageModeDisplayer.h">
-      <Filter>ImageModeDisplayer</Filter>
+    <ClInclude Include="DisplayManager.h">
+      <Filter>ModeDisplayer\DisplayManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Object3DDisplayer.h">
+      <Filter>ModeDisplayer\Object3DDisplayer</Filter>
+    </ClInclude>
+    <ClInclude Include="IImageModeDisplayer.h">
+      <Filter>ModeDisplayer\2DDisplayer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

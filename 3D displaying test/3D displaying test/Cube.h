@@ -17,7 +17,7 @@ public:
 		this->_model->scale(this->_size);
 	}
 	glm::vec3 getCubePos()const;
-	std::shared_ptr<Model> getCubeModel()const;
+	const std::shared_ptr<Model> getCubeModel() const noexcept;
 private:
 	std::vector<Vertex> _createVertices();
 	glm::vec3 _cubePos;

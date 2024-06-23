@@ -15,7 +15,7 @@
 #include "Model.h"
 #include "Camera.h"
 #include "Cube.h"
-#include "ImageModeDisplayer.h"
+#include "DisplayManager.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -84,8 +84,6 @@ int main()
 	//modelObj.setModelMatrix(glm::translate(modelObj.getModelMatrix(), glm::vec3(0.0f, 0.0f, 0.0f))); // ustawienie bry³y w uk³adzie
 	modelObj.translate(glm::vec3(0.0f, 0.0f, 0.0f));
 	modelObj.rotate(glm::radians(90.f), glm::vec3(1.0f, 0.0f, 0.0f));
-	//modelObj.setModelMatrix(glm::rotate(modelObj.getModelMatrix(), glm::radians(90.f), glm::vec3(1.0f, 0.0f, 0.0f))); // rotacja bry³y mo¿liwa równie¿ przez obrot kamery wektor "Front"
-	//modelObj.setModelMatrix(glm::scale(modelObj.getModelMatrix(), glm::vec3(1.0f)));
 	modelObj.scale(glm::vec3(1.0f));
 
 	// Array of shader names
