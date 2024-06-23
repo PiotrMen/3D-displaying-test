@@ -33,7 +33,7 @@ Object3DDisplayer::~Object3DDisplayer()
 	glDeleteRenderbuffers(1, &this->_rbo);
 }
 
-void Object3DDisplayer::display(const Model& modelToDisplay, ShaderMode shaderMode)
+void Object3DDisplayer::display(const Model& modelToDisplay, ShaderMode shaderMode, RenderingMode renderingMode)
 {
 
 }

@@ -23,9 +23,9 @@ public:
 		}
 	}
 
-	void displayObject3D(const Model& modelToDisplay, ShaderMode shaderMode) {
+	void displayObject3D(const Model& modelToDisplay, ShaderMode shaderMode, RenderingMode renderingMode) {
 		if (currentObject3DDisplayer) {
-			currentObject3DDisplayer->display(modelToDisplay,shaderMode);
+			currentObject3DDisplayer->display(modelToDisplay,shaderMode, renderingMode);
 		}
 		else {
 			throw std::runtime_error("Current displayer is not an object 3D displayer");

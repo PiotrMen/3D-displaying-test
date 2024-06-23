@@ -125,10 +125,7 @@ int main()
 		// Clear the color and depth buffer for the outer window
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glBindFramebuffer(GL_FRAMEBUFFER, object3DDisplayer.getFrameBuffer());
-		glEnable(GL_DEPTH_TEST);
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		
 
 
 		// ImGui Radio buttons do wyboru shaderów
@@ -167,6 +164,10 @@ int main()
 				lastTime = glfwGetTime();  // Reset current time when enabling rotation
 			}
 		}
+		glBindFramebuffer(GL_FRAMEBUFFER, object3DDisplayer.getFrameBuffer());
+		glEnable(GL_DEPTH_TEST);
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// First pass: render the scene to the framebuffer
 		ShaderProgram* currentShader = (selectedShader == 0) ? &shaderGradientProgram : &shaderLightProgram;
 		// Set rendering mode
