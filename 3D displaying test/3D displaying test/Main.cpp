@@ -164,27 +164,11 @@ int main()
 				lastTime = glfwGetTime();  // Reset current time when enabling rotation
 			}
 		}
-		glBindFramebuffer(GL_FRAMEBUFFER, object3DDisplayer.getFrameBuffer());
-		glEnable(GL_DEPTH_TEST);
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		
 		// First pass: render the scene to the framebuffer
 		ShaderProgram* currentShader = (selectedShader == 0) ? &shaderGradientProgram : &shaderLightProgram;
 		// Set rendering mode
-		if (selectedShader == 1) {
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		}
-		else {
-			if (selectedRenderingMode == 0) {
-				glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
-			}
-			else if (selectedRenderingMode == 1) {
-				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			}
-			else if (selectedRenderingMode == 2) {
-				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-			}
-		}
+		
 		// Draw the model
 		currentShader->use();
 
@@ -227,11 +211,10 @@ int main()
 		}
 		
 
-
-		// Render the selected object with element usage percentage
-		int vertexCount = static_cast<int>(modelObj.getVertices().size() * (elementUsagePercentage / 100.0f));
+		object3DDisplayer.display(modelObj, *currentShader, RenderingMode::FILL, 100.0f);
+		//Render the selected object with element usage percentage
 		//ustawienie modeli
-		if (selectedObject == 0) {
+		/*if (selectedObject == 0) {
 			modelObj.bind();
 			currentShader->setMat4("model", modelObj.getModelMatrix());
 			glDrawArrays(GL_TRIANGLES, 0, vertexCount);
@@ -239,7 +222,7 @@ int main()
 			currentShader->setMat4("model", basicCube.getCubeModel()->getModelMatrix());
 			basicCube.getCubeModel()->bind();
 			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
+		}*/
 		
 		if (selectedShader == 1) {
 			shaderCube.use();

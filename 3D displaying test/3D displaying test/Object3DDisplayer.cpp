@@ -24,6 +24,9 @@ Object3DDisplayer::Object3DDisplayer(int width, int height) : _width(width), _he
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
 }
 
 Object3DDisplayer::~Object3DDisplayer()
@@ -33,9 +36,27 @@ Object3DDisplayer::~Object3DDisplayer()
 	glDeleteRenderbuffers(1, &this->_rbo);
 }
 
-void Object3DDisplayer::display(const Model& modelToDisplay, ShaderMode shaderMode, RenderingMode renderingMode)
+void Object3DDisplayer::display(const Model& modelToDisplay, const ShaderProgram& shaderProgram, RenderingMode renderingMode, float elementUsagePercentage)
 {
+	glBindFramebuffer(GL_FRAMEBUFFER, this->_framebuffer);
+	glEnable(GL_DEPTH_TEST);
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	if (renderingMode == RenderingMode::POINT) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+	}
+	else if (renderingMode == RenderingMode::LINE) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+	else if (renderingMode == RenderingMode::FILL) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+	// Render the selected object with element usage percentage
+	int vertexCount = static_cast<int>(modelToDisplay.getVertices().size() * (elementUsagePercentage / 100.0f));
+	modelToDisplay.bind();
+	shaderProgram.setMat4("model", modelToDisplay.getModelMatrix());
+	glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 }
 
 unsigned int Object3DDisplayer::getFrameBuffer()const

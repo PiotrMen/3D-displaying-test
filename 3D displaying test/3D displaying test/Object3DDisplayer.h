@@ -1,6 +1,6 @@
 #pragma once
 #include "IImageModeDisplayer.h"
-
+#include"Shaders.h"
 enum class ShaderMode
 {
 	Gradient,
@@ -18,7 +18,7 @@ public:
 	virtual ~IObject3DDisplayer() = default;
 	virtual unsigned int getFrameBuffer() const = 0;
 	virtual unsigned int getTexColorBuffer() const = 0;
-	virtual void display(const Model& displayedImg, ShaderMode shaderMode, RenderingMode renderingMode) = 0;
+	virtual void display(const Model& modelToDisplay, const ShaderProgram& shaderProgram, RenderingMode renderingMode, float elementUsagePercentage) = 0;
 };
 
 class Object3DDisplayer
@@ -28,7 +28,7 @@ public:
 	Object3DDisplayer(int width, int height);
 	~Object3DDisplayer();
 
-	void display(const Model& modelToDisplay, ShaderMode shaderMode,RenderingMode renderingMode) override; // Implementacja z IObject3DDisplayer
+	void display(const Model& modelToDisplay, const ShaderProgram& shaderProgram, RenderingMode renderingMode, float elementUsagePercentage) override; // Implementacja z IObject3DDisplayer
 	unsigned int getFrameBuffer()const override;
 	unsigned int getTexColorBuffer()const override;
 
