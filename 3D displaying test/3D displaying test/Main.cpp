@@ -14,7 +14,6 @@
 #include "shaders.h"
 #include "Model.h"
 #include "Camera.h"
-#include "Cube.h"
 #include "DisplayManager.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -70,15 +69,10 @@ int main()
 	ShadowShaderProgram shadowShaderProgram(Shader(GL_VERTEX_SHADER, "shaders/ligthing_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/ligthing_fragment_shader.glsl"));
 	// Load model
 	Model modelObj("3d files/figure_Hollow_Supp.stl");
+	Model lightcube(ModelType::Cube, glm::vec3(250.0f, -80.0f, 100.0f), glm::vec3(20.0f));
 	Camera camera(glm::vec3(0.0f, 0.0f, 10.0f));
-	
-
 	Object3DDisplayer object3DDisplayer(mode->width, mode->height);
-	Object3DDisplayer lightDisplayer(mode->width, mode->height);
 
-	//Lokazja, oraz rozmiar
-	Cube lightcube(250.0f, -80.0f, 100.0f, glm::vec3(20.0f));
-	Cube basicCube(0.0f, 0.0f, 0.0f, glm::vec3(80.0f));
 	glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 	// Ustawianie macierzy modelu
 	modelObj.translate(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -87,9 +81,6 @@ int main()
 
 	ShaderMode selectedShaderMode = ShaderMode::Gradient;
 	RenderingMode selectedRenderingMode = RenderingMode::FILL;
-	// Array of object names
-	const char* objectNames[] = { "Model", "Cube" };
-	int selectedObject = 0;
 	// Variables for light properties
 	static float ambientStrength = 0.1f;
 	static float diffuseStrength = 0.4f;
@@ -132,12 +123,6 @@ int main()
 			ImGui::SliderFloat("Specular Strength", &specularStrength, 0.0f, 1.0f);
 		}
 
-		// ImGui radio buttons for object selection
-		ImGui::PushItemWidth(150);  // Set width to 150 pixels
-		if (ImGui::RadioButton("Model", selectedObject == 0)) selectedObject = 0;
-		ImGui::SameLine();
-		if (ImGui::RadioButton("Cube", selectedObject == 1)) selectedObject = 1;
-
 		// ImGui radio buttons for rendering mode selection
 		if (selectedShaderMode == ShaderMode::Gradient) {
 			if (ImGui::RadioButton("Point Cloud", selectedRenderingMode == RenderingMode::POINT)) selectedRenderingMode = RenderingMode::POINT;
@@ -161,20 +146,6 @@ int main()
 		}
 		ImGui::End();
 
-		
-
-		//Render the selected object with element usage percentage
-		//ustawienie modeli
-		/*if (selectedObject == 0) {
-			modelObj.bind();
-			currentShader->setMat4("model", modelObj.getModelMatrix());
-			glDrawArrays(GL_TRIANGLES, 0, vertexCount);
-		}else if (selectedObject == 1) {		
-			currentShader->setMat4("model", basicCube.getCubeModel()->getModelMatrix());
-			basicCube.getCubeModel()->bind();
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}*/
-
 		// Transformacja kamery
 		if (rotateCamera) {
 			float currentTime = glfwGetTime();
@@ -194,28 +165,27 @@ int main()
 
 		ImGui::Begin("3D Model");
 		//ustawienie shaderow
+		glBindFramebuffer(GL_FRAMEBUFFER, object3DDisplayer.getFrameBuffer());
+		glEnable(GL_DEPTH_TEST);
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		if (selectedShaderMode == ShaderMode::Lighting) {
 			shadowShaderProgram.use();
-			shadowShaderProgram.setValues(projection, view, camera, lightcube.getCubePos(), ambientStrength, diffuseStrength, specularStrength);
+			shadowShaderProgram.setValues(projection, view, camera, lightcube.getModelPos(), ambientStrength, diffuseStrength, specularStrength);
 			object3DDisplayer.display(modelObj, &shadowShaderProgram, selectedRenderingMode, elementUsagePercentage);
+			cubeShaderProgram.use();
+			cubeShaderProgram.setValues(projection, view, lightcube.getModelMatrix());
+			object3DDisplayer.display(lightcube, &cubeShaderProgram, selectedRenderingMode, elementUsagePercentage);
 		}
 		else if (selectedShaderMode == ShaderMode::Gradient) {
 			gradientShaderProgram.use();
 			gradientShaderProgram.setValues(projection, view, camera, radius);
 			object3DDisplayer.display(modelObj, &gradientShaderProgram, selectedRenderingMode, elementUsagePercentage);
 		}
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		ImGui::Image((void*)(intptr_t)object3DDisplayer.getTexColorBuffer(), ImVec2(mode->width, mode->height));
 		ImGui::End();
-
-		ImGui::Begin("3D Light cube");
-		if (selectedShaderMode == ShaderMode::Lighting) {
-			cubeShaderProgram.use();
-			cubeShaderProgram.setValues(projection, view, lightcube.getCubeModel()->getModelMatrix());
-			lightDisplayer.display(*lightcube.getCubeModel(), &cubeShaderProgram, selectedRenderingMode, elementUsagePercentage);
-			ImGui::Image((void*)(intptr_t)lightDisplayer.getTexColorBuffer(), ImVec2(mode->width, mode->height));
-		}
-		ImGui::End();
-
+		
 		// Rendering
 		ImGui::Render();
 		int display_w, display_h;

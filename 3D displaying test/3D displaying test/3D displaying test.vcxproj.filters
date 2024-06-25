@@ -84,9 +84,6 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Cube.cpp">
-      <Filter>Light</Filter>
-    </ClCompile>
     <ClCompile Include="DisplayManager.cpp">
       <Filter>ModeDisplayer\DisplayManager</Filter>
     </ClCompile>
@@ -1018,9 +1015,6 @@
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="Cube.h">
-      <Filter>Light</Filter>
     </ClInclude>
     <ClInclude Include="DisplayManager.h">
       <Filter>ModeDisplayer\DisplayManager</Filter>

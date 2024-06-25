@@ -155,7 +155,6 @@
     <ClCompile Include="Dependencies\Imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="Dependencies\Imgui\imgui_tables.cpp" />
     <ClCompile Include="Dependencies\Imgui\imgui_widgets.cpp" />
-    <ClCompile Include="Cube.cpp" />
     <ClCompile Include="DisplayManager.cpp" />
     <ClCompile Include="IImageModeDisplayer.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -471,7 +470,6 @@
     <ClInclude Include="DisplayManager.h" />
     <ClInclude Include="IImageModeDisplayer.h" />
     <ClInclude Include="Imgui\imgui.h" />
-    <ClInclude Include="Cube.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Object3DDisplayer.h" />
     <ClInclude Include="Shaders.h" />

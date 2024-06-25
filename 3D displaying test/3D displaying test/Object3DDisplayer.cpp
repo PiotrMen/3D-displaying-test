@@ -38,11 +38,7 @@ Object3DDisplayer::~Object3DDisplayer()
 
 void Object3DDisplayer::display(const Model& modelToDisplay, ShaderProgram* shaderProgram, RenderingMode renderingMode, float elementUsagePercentage)
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, this->_framebuffer);
-	glEnable(GL_DEPTH_TEST);
-	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	
 	if (renderingMode == RenderingMode::POINT) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
 	}
@@ -52,12 +48,12 @@ void Object3DDisplayer::display(const Model& modelToDisplay, ShaderProgram* shad
 	else if (renderingMode == RenderingMode::FILL) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
-	// Render the selected object with element usage percentage
+	
+	// Ustal liczba wierzcho³ków do rysowania
 	int vertexCount = static_cast<int>(modelToDisplay.getVertices().size() * (elementUsagePercentage / 100.0f));
 	modelToDisplay.bind();
 	shaderProgram->setMat4("model", modelToDisplay.getModelMatrix());
 	glDrawArrays(GL_TRIANGLES, 0, vertexCount);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 unsigned int Object3DDisplayer::getFrameBuffer()const
