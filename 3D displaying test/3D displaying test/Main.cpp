@@ -18,18 +18,6 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
-void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-
-bool rightMouseButtonPressed = false;
-float lastX = 0.0f, lastY = 0.0f;
-float yaw = -90.0f, pitch = 0.0f; // Initialize yaw and pitch to set the initial direction
-bool firstMouse = true;
-float distanceFromTarget = 50.0f; // Distance from the target to the camera
-
-glm::vec3 cameraTarget(0.0f, -100.0f, 0.0f); // The point the camera will orbit around
-Camera camera(glm::vec3(0.0f, 0.0f, distanceFromTarget)); // Initial camera position
 
 int main()
 {
@@ -55,9 +43,14 @@ int main()
     // Make the window's context current
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    glfwSetMouseButtonCallback(window, mouse_button_callback);
-    glfwSetCursorPosCallback(window, cursor_position_callback);
-    glfwSetScrollCallback(window, scroll_callback); // Set scroll callback
+
+    // Set the camera instance and callbacks
+    Camera camera(glm::vec3(0.0f, 150.0f, 150.0f)); // Initial camera position
+    camera.distanceFromTarget = 450.0f; // Set initial distance from target
+    Camera::SetCurrentCamera(&camera);
+    glfwSetMouseButtonCallback(window, Camera::MouseButtonCallback);
+    glfwSetCursorPosCallback(window, Camera::CursorPositionCallback);
+    glfwSetScrollCallback(window, Camera::ScrollCallback);
 
     // Initialize GLAD
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -163,6 +156,9 @@ int main()
         }
         ImGui::End();
 
+        // Update radius based on camera distance
+        radius = camera.GetDistanceFromTarget();
+
         // Tworzenie transformacji
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), static_cast<float>(mode->width) / static_cast<float>(mode->height), 0.1f, 1000.0f);
         glm::mat4 view = camera.GetViewMatrix();  // Uzyskanie macierzy widoku z kamery
@@ -220,80 +216,4 @@ void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-}
-
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
-{
-    if (button == GLFW_MOUSE_BUTTON_RIGHT)
-    {
-        if (action == GLFW_PRESS)
-        {
-            rightMouseButtonPressed = true;
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            firstMouse = true; // Reset firstMouse to ensure smooth transition
-        }
-        else if (action == GLFW_RELEASE)
-        {
-            rightMouseButtonPressed = false;
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        }
-    }
-}
-
-void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
-{
-    if (rightMouseButtonPressed)
-    {
-        if (firstMouse)
-        {
-            lastX = xpos;
-            lastY = ypos;
-            firstMouse = false;
-        }
-
-        float xOffset = xpos - lastX;
-        float yOffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-
-        lastX = xpos;
-        lastY = ypos;
-
-        float sensitivity = 0.1f; // change this value to your liking
-        xOffset *= sensitivity;
-        yOffset *= sensitivity;
-
-        yaw += xOffset;
-        pitch += yOffset;
-
-        if (pitch > 89.0f)
-            pitch = 89.0f;
-        if (pitch < -89.0f)
-            pitch = -89.0f;
-
-        // Update camera position based on yaw, pitch, and distance from the target
-        glm::vec3 newPosition;
-        newPosition.x = cameraTarget.x + distanceFromTarget * cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-        newPosition.y = cameraTarget.y + distanceFromTarget * sin(glm::radians(pitch));
-        newPosition.z = cameraTarget.z + distanceFromTarget * cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-        camera.Position = newPosition;
-
-        // Always look at the target
-        camera.Front = glm::normalize(cameraTarget - camera.Position);
-    }
-}
-
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
-    distanceFromTarget -= (float)yoffset;
-    if (distanceFromTarget < 1.0f)
-        distanceFromTarget = 1.0f;
-
-    // Update camera position based on the new distance
-    glm::vec3 newPosition;
-    newPosition.x = cameraTarget.x + distanceFromTarget * cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-    newPosition.y = cameraTarget.y + distanceFromTarget * sin(glm::radians(pitch));
-    newPosition.z = cameraTarget.z + distanceFromTarget * cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-    camera.Position = newPosition;
-
-    // Always look at the target
-    camera.Front = glm::normalize(cameraTarget - camera.Position);
 }
