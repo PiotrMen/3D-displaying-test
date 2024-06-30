@@ -58,7 +58,6 @@ int main()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
-
     glEnable(GL_DEPTH_TEST);
 
     // Setup ImGui
@@ -91,18 +90,8 @@ int main()
     static float ambientStrength = 0.1f;
     static float diffuseStrength = 0.4f;
     static float specularStrength = 0.7f;
-
-    // skala promienia
-    static float radius = 400.0f;
-
     // Variable for percentage of used element
     static float elementUsagePercentage = 100.0f;
-
-    // Variable to control camera rotation
-    bool rotateCamera = false;
-    static float currentTime = 0.0f;
-    static float lastTime = 0.0f;
-
     // Render loop
     while (!glfwWindowShouldClose(window))
     {
@@ -131,7 +120,6 @@ int main()
             ImGui::SliderFloat("Diffuse Strength", &diffuseStrength, 0.0f, 1.0f);
             ImGui::SliderFloat("Specular Strength", &specularStrength, 0.0f, 1.0f);
         }
-
         // ImGui radio buttons for rendering mode selection
         if (selectedShaderMode == ShaderMode::Gradient) {
             if (ImGui::RadioButton("Point Cloud", selectedRenderingMode == RenderingMode::POINT)) selectedRenderingMode = RenderingMode::POINT;
@@ -146,18 +134,7 @@ int main()
             selectedRenderingMode = RenderingMode::FILL;
             elementUsagePercentage = 100.0f;
         }
-
-        // Add a button to toggle camera rotation
-        if (ImGui::Button("Camera Rotation")) {
-            rotateCamera = !rotateCamera;
-            if (rotateCamera) {
-                lastTime = glfwGetTime();  // Reset current time when enabling rotation
-            }
-        }
         ImGui::End();
-
-        // Update radius based on camera distance
-        radius = camera.GetDistanceFromTarget();
 
         // Tworzenie transformacji
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), static_cast<float>(mode->width) / static_cast<float>(mode->height), 0.1f, 1000.0f);
@@ -179,7 +156,7 @@ int main()
         }
         else if (selectedShaderMode == ShaderMode::Gradient) {
             gradientShaderProgram.use();
-            gradientShaderProgram.setValues(projection, view, camera, radius);
+            gradientShaderProgram.setValues(projection, view, camera, camera.GetDistanceFromTarget());
             object3DDisplayer.display(modelObj, &gradientShaderProgram, selectedRenderingMode, elementUsagePercentage);
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
