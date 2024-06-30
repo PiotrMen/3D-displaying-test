@@ -58,6 +58,7 @@ int main()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
+
     glEnable(GL_DEPTH_TEST);
 
     // Setup ImGui
@@ -68,6 +69,7 @@ int main()
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
+    //ToDo nie inicjalizowac od razu wszystkich shaderow tylko te wybrane (szkoda czasu przetwarzania i pamiêci jeœli to nie jest potrzebne). Mozna to zrobic dopiero w Ifie nizej gdzie sprawdzamy jaki guzik nacisniety. Skorzystaj z dziedziczenia. 
     // Build and compile our shader program
     GradientShaderProgram gradientShaderProgram(Shader(GL_VERTEX_SHADER, "shaders/Gradient_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/Gradient_fragment_shader.glsl"));
     CubeShaderProgram cubeShaderProgram(Shader(GL_VERTEX_SHADER, "shaders/cube_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/cube_fragment_shader.glsl"));
@@ -75,6 +77,8 @@ int main()
 
     // Load model
     Model modelObj("3d files/figure_Hollow_Supp.stl");
+    
+    //ToDo Light cube jest potrzebne tylko w jednym trybie. Chyba niepotrzebnie go inicjalizujemy zawsze.
     Model lightcube(ModelType::Cube, glm::vec3(250.0f, -80.0f, 100.0f), glm::vec3(20.0f));
     Object3DDisplayer object3DDisplayer(mode->width, mode->height);
 
@@ -83,15 +87,27 @@ int main()
     modelObj.rotate(glm::radians(90.f), glm::vec3(1.0f, 0.0f, 0.0f));
     modelObj.scale(glm::vec3(1.0f));
 
+    //ToDo to nie lepiej, ¿eby by³o w klasie odpowiadaj¹cej za wyœwietlanie? Object3DDisplayer mog³by tym zarz¹dzaæ. Tak zeby mieæ wszystko w jednym miejscu co do wyœwietlania. 
     ShaderMode selectedShaderMode = ShaderMode::Gradient;
     RenderingMode selectedRenderingMode = RenderingMode::FILL;
 
+    //ToDo to tak samo nie potrzebne w ka¿dym z trybów. 
     // Variables for light properties
     static float ambientStrength = 0.1f;
     static float diffuseStrength = 0.4f;
     static float specularStrength = 0.7f;
+
+    // skala promienia
+    static float radius = 400.0f;
+
     // Variable for percentage of used element
     static float elementUsagePercentage = 100.0f;
+
+    // Variable to control camera rotation
+    bool rotateCamera = false;
+    static float currentTime = 0.0f;
+    static float lastTime = 0.0f;
+
     // Render loop
     while (!glfwWindowShouldClose(window))
     {
@@ -114,12 +130,15 @@ int main()
         if (ImGui::RadioButton("Gradient Shader", selectedShaderMode == ShaderMode::Gradient)) selectedShaderMode = ShaderMode::Gradient;
         ImGui::SameLine();
         if (ImGui::RadioButton("Lighting Shader", selectedShaderMode == ShaderMode::Lighting)) selectedShaderMode = ShaderMode::Lighting;
+
+        //ToDo te wszystkie Ify mozna chyba zrobic w klasie do wyswietlania. Generalnie wtedy kiedy mozna unikac ifow to lepiej to robic. To jest bardzo nieuniwersalne podejscie, ale najprostsze. Dlatego teraz warto to moze zrefaktoryzowac.
         // Display sliders only if Lighting Shader is selected
         if (selectedShaderMode == ShaderMode::Lighting) {
             ImGui::SliderFloat("Ambient Strength", &ambientStrength, 0.0f, 1.0f);
             ImGui::SliderFloat("Diffuse Strength", &diffuseStrength, 0.0f, 1.0f);
             ImGui::SliderFloat("Specular Strength", &specularStrength, 0.0f, 1.0f);
         }
+
         // ImGui radio buttons for rendering mode selection
         if (selectedShaderMode == ShaderMode::Gradient) {
             if (ImGui::RadioButton("Point Cloud", selectedRenderingMode == RenderingMode::POINT)) selectedRenderingMode = RenderingMode::POINT;
@@ -134,7 +153,18 @@ int main()
             selectedRenderingMode = RenderingMode::FILL;
             elementUsagePercentage = 100.0f;
         }
+
+        // Add a button to toggle camera rotation
+        if (ImGui::Button("Camera Rotation")) {
+            rotateCamera = !rotateCamera;
+            if (rotateCamera) {
+                lastTime = glfwGetTime();  // Reset current time when enabling rotation
+            }
+        }
         ImGui::End();
+
+        // Update radius based on camera distance
+        radius = camera.GetDistanceFromTarget();
 
         // Tworzenie transformacji
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), static_cast<float>(mode->width) / static_cast<float>(mode->height), 0.1f, 1000.0f);
@@ -146,6 +176,9 @@ int main()
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        
+        //ToDo tutaj tak samo. Zastanow sie jak uniknac ifow. moze lepiej zrobic to w klasie Object3DDisplayer? w przypadku dodania nowych trybow trzeba by bylo rozbudowywac tego ifa a to troche bez sensu bo niezgodne z Solid oraz trzeba szukac w kupie kodu gdzie jest ten if. Nawet nie wiemy czy to jedyny if ktory musimy zedytowac.
         if (selectedShaderMode == ShaderMode::Lighting) {
             shadowShaderProgram.use();
             shadowShaderProgram.setValues(projection, view, camera, lightcube.getModelPos(), ambientStrength, diffuseStrength, specularStrength);
@@ -156,7 +189,7 @@ int main()
         }
         else if (selectedShaderMode == ShaderMode::Gradient) {
             gradientShaderProgram.use();
-            gradientShaderProgram.setValues(projection, view, camera, camera.GetDistanceFromTarget());
+            gradientShaderProgram.setValues(projection, view, camera, radius);
             object3DDisplayer.display(modelObj, &gradientShaderProgram, selectedRenderingMode, elementUsagePercentage);
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -181,6 +214,8 @@ int main()
 
     glfwDestroyWindow(window);
     glfwTerminate();
+    
+
     return 0;
 }
 
