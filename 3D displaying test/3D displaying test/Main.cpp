@@ -180,9 +180,14 @@ int main()
         
         //ToDo tutaj tak samo. Zastanow sie jak uniknac ifow. moze lepiej zrobic to w klasie Object3DDisplayer? w przypadku dodania nowych trybow trzeba by bylo rozbudowywac tego ifa a to troche bez sensu bo niezgodne z Solid oraz trzeba szukac w kupie kodu gdzie jest ten if. Nawet nie wiemy czy to jedyny if ktory musimy zedytowac.
         if (selectedShaderMode == ShaderMode::Lighting) {
-            shadowShaderProgram.use();
-            shadowShaderProgram.setValues(projection, view, camera, lightcube.getModelPos(), ambientStrength, diffuseStrength, specularStrength);
-            object3DDisplayer.display(modelObj, &shadowShaderProgram, selectedRenderingMode, elementUsagePercentage);
+
+            std::unique_ptr<ShadowShaderProgram> shaderProgram = std::make_unique<ShadowShaderProgram>(Shader(GL_VERTEX_SHADER, "shaders/ligthing_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/ligthing_fragment_shader.glsl"));
+            shaderProgram->use();
+            shaderProgram->setValues(projection, view, camera, lightcube.getModelPos(), ambientStrength, diffuseStrength, specularStrength);
+            //shadowShaderProgram.use();
+            //shadowShaderProgram.setValues(projection, view, camera, lightcube.getModelPos(), ambientStrength, diffuseStrength, specularStrength);
+            //object3DDisplayer.display(modelObj, std::make_unique<ShaderProgram>(shaderProgram).get(), selectedRenderingMode, elementUsagePercentage);
+            object3DDisplayer.display(modelObj, shaderProgram.get(), selectedRenderingMode, elementUsagePercentage);
             cubeShaderProgram.use();
             cubeShaderProgram.setValues(projection, view, lightcube.getModelMatrix());
             object3DDisplayer.display(lightcube, &cubeShaderProgram, selectedRenderingMode, elementUsagePercentage);

@@ -1,6 +1,8 @@
 #pragma once
 #include "IImageModeDisplayer.h"
 #include"Shaders.h"
+
+//ToDo zamiast enum class ShaderMode zmien to na klasy ktore obsluguja kazda swoj tryb wyswietlania. Uwzglednij ze w przyszlosci bedzie wiecej trybow czyli zastanow sie nad zrobieniem klasy bazowe typu Displaying mode i reszta bedzie po niej dziedziczyc
 enum class ShaderMode
 {
 	Gradient,
