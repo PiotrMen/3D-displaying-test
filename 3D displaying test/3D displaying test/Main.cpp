@@ -3,14 +3,10 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include <iostream>
-#include <vector>
 #include "shaders.h"
 #include "Model.h"
 #include "Camera.h"
@@ -97,16 +93,8 @@ int main()
     static float diffuseStrength = 0.4f;
     static float specularStrength = 0.7f;
 
-    // skala promienia
-    static float radius = 400.0f;
-
     // Variable for percentage of used element
     static float elementUsagePercentage = 100.0f;
-
-    // Variable to control camera rotation
-    bool rotateCamera = false;
-    static float currentTime = 0.0f;
-    static float lastTime = 0.0f;
 
     // Render loop
     while (!glfwWindowShouldClose(window))
@@ -127,6 +115,8 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // ImGui Radio buttons do wyboru shaderów
+        //todo mozna zrobic tu settera ktory bedzie ustawial nowa klase w Object3DDisplayer na przyklad DisplayingMode ktory tworzy klase i odrazu zapisuje ja w Object3DDisplayer
+
         if (ImGui::RadioButton("Gradient Shader", selectedShaderMode == ShaderMode::Gradient)) selectedShaderMode = ShaderMode::Gradient;
         ImGui::SameLine();
         if (ImGui::RadioButton("Lighting Shader", selectedShaderMode == ShaderMode::Lighting)) selectedShaderMode = ShaderMode::Lighting;
@@ -154,17 +144,7 @@ int main()
             elementUsagePercentage = 100.0f;
         }
 
-        // Add a button to toggle camera rotation
-        if (ImGui::Button("Camera Rotation")) {
-            rotateCamera = !rotateCamera;
-            if (rotateCamera) {
-                lastTime = glfwGetTime();  // Reset current time when enabling rotation
-            }
-        }
         ImGui::End();
-
-        // Update radius based on camera distance
-        radius = camera.GetDistanceFromTarget();
 
         // Tworzenie transformacji
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), static_cast<float>(mode->width) / static_cast<float>(mode->height), 0.1f, 1000.0f);
@@ -180,21 +160,20 @@ int main()
         
         //ToDo tutaj tak samo. Zastanow sie jak uniknac ifow. moze lepiej zrobic to w klasie Object3DDisplayer? w przypadku dodania nowych trybow trzeba by bylo rozbudowywac tego ifa a to troche bez sensu bo niezgodne z Solid oraz trzeba szukac w kupie kodu gdzie jest ten if. Nawet nie wiemy czy to jedyny if ktory musimy zedytowac.
         if (selectedShaderMode == ShaderMode::Lighting) {
-
             ShadowShaderProgram shaderProgram = ShadowShaderProgram(Shader(GL_VERTEX_SHADER, "shaders/ligthing_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/ligthing_fragment_shader.glsl"));
             shaderProgram.use();
             shaderProgram.setValues(projection, view, camera, lightcube.getModelPos(), ambientStrength, diffuseStrength, specularStrength);
+            object3DDisplayer.display(modelObj, &shaderProgram, selectedRenderingMode, elementUsagePercentage);
             //shadowShaderProgram.use();
             //shadowShaderProgram.setValues(projection, view, camera, lightcube.getModelPos(), ambientStrength, diffuseStrength, specularStrength);
             //object3DDisplayer.display(modelObj, std::make_unique<ShaderProgram>(shaderProgram).get(), selectedRenderingMode, elementUsagePercentage);
-            object3DDisplayer.display(modelObj, &shaderProgram, selectedRenderingMode, elementUsagePercentage);
             cubeShaderProgram.use();
             cubeShaderProgram.setValues(projection, view, lightcube.getModelMatrix());
             object3DDisplayer.display(lightcube, &cubeShaderProgram, selectedRenderingMode, elementUsagePercentage);
         }
         else if (selectedShaderMode == ShaderMode::Gradient) {
             gradientShaderProgram.use();
-            gradientShaderProgram.setValues(projection, view, camera, radius);
+            gradientShaderProgram.setValues(projection, view, camera, camera.GetDistanceFromTarget());
             object3DDisplayer.display(modelObj, &gradientShaderProgram, selectedRenderingMode, elementUsagePercentage);
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
