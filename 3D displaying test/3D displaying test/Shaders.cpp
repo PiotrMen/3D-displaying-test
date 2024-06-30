@@ -194,7 +194,7 @@ void CubeShaderProgram::setValues(const glm::mat4& projection, const glm::mat4& 
 {
 	this->setMat4("projection", projection);
 	this->setMat4("view", view);
-	this->setMat4("model", model);
+	//this->setMat4("model", model);
 }
 
 void ShadowShaderProgram::setValues(const glm::mat4& projection, const glm::mat4& view, const Camera& camera, glm::vec3 cubePos,float ambientStrength,float diffuseStrength ,float specularStrength) const

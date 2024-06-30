@@ -2,7 +2,7 @@
 #include "IImageModeDisplayer.h"
 #include"Shaders.h"
 
-//ToDo zamiast enum class ShaderMode zmien to na klasy ktore obsluguja kazda swoj tryb wyswietlania. Uwzglednij ze w przyszlosci bedzie wiecej trybow czyli zastanow sie nad zrobieniem klasy bazowe typu Displaying mode i reszta bedzie po niej dziedziczyc
+//ToDo zamiast enum class ShaderMode zmien to na klasy ktore obsluguja kazda swoj tryb wyswietlania. Uwzglednij ze w przyszlosci bedzie wiecej trybow czyli zastanow sie nad zrobieniem klasy bazowe typu Displaying mode i reszta bedzie po niej dziedziczyc.
 enum class ShaderMode
 {
 	Gradient,
@@ -31,6 +31,7 @@ public:
 	~Object3DDisplayer();
 
 	void display(const Model& modelToDisplay, ShaderProgram* shaderProgram, RenderingMode renderingMode, float elementUsagePercentage) override; // Implementacja z IObject3DDisplayer
+	
 	unsigned int getFrameBuffer()const override;
 	unsigned int getTexColorBuffer()const override;
 
