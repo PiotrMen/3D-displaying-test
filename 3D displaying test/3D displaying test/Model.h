@@ -21,11 +21,13 @@ enum class ModelType {
     Cube
 };
 
+
 class Model
 {
 public:   
     explicit Model(const std::string& path);
     explicit Model(const std::vector<Vertex>& verticies);
+    //ToDo to raczej niepotrzebne. Ja bym to widzial jako nowa klasa Cube ktora dziedziczy po Model. Dzieki temu w przyszlosci dodajac nowe klasy sphere itp nie musimy edytowac istniejacego kodu.
     explicit Model(ModelType type, const glm::vec3& position, const glm::vec3& size);
     ~Model();
     void bind() const;

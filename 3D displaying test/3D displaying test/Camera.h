@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <GLFW/glfw3.h>
 
+//ToDo dlaczego enum a nie enum class?
 enum Camera_Movement {
     FORWARD,
     BACKWARD,
@@ -18,9 +19,23 @@ const float SPEED = 2.5f;
 const float SENSITIVITY = 0.1f;
 const float ZOOM = 30.0f; // Changed from 45.0f to 30.0f
 
+//ToDo ja wole osobiscie pisac klasy w ten sposob zawsze i potem wiem dokladnie gdzie czego szukac. Chodzi tez o to, ze programiste innego interesuja tylko rzeczy publiczne a prywatne wgl nie. Wiec ma wszystko publiczne od razu na gorze:
 class Camera
 {
 public:
+    //!Wszystkie metody publiczne
+public:
+    //!Wszystkie zmienne publiczne
+private:
+    //!Wszystkie metody prywatne
+private:
+    //!Wszystkie zmienne prywatne
+};
+
+class Camera
+{
+public:
+    //ToDo Czy te zmienne musz¹ byæ publiczne? jesli tak to na pewno wszystkie?
     glm::vec3 Position;
     glm::vec3 Front;
     glm::vec3 Up;
@@ -63,6 +78,7 @@ private:
     float lastX = 0.0f, lastY = 0.0f;
     glm::vec3 cameraTarget = glm::vec3(0.0f, -100.0f, 0.0f);
 
+    //ToDo tutaj raczej nie mo¿e byæ statyczna zmienna. Po co ona? Lepiej za³o¿yæ, ¿e mo¿emy mieæ wiêcej ni¿ jedn¹ klasê kamery. Na przyk³ad kiedy mamy wiêcej ni¿ jedno okno. Czyli na przyk³ad kilka fizycznych kamer pod³¹czonych do kompa.
     // Static variable to hold the current camera instance
     static Camera* currentCamera;
 };
