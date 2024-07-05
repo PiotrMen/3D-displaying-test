@@ -73,15 +73,17 @@ int main()
 
     // Load model
     Model modelObj("3d files/figure_Hollow_Supp.stl");
-    
+
     //ToDo Light cube jest potrzebne tylko w jednym trybie. Chyba niepotrzebnie go inicjalizujemy zawsze.
-    Model lightcube(ModelType::Cube, glm::vec3(250.0f, -80.0f, 100.0f), glm::vec3(20.0f));
+    Cube lightcube;
     Object3DDisplayer object3DDisplayer(mode->width, mode->height);
 
     // Ustawianie macierzy modelu
     modelObj.translate(glm::vec3(0.0f, 0.0f, 0.0f));
     modelObj.rotate(glm::radians(90.f), glm::vec3(1.0f, 0.0f, 0.0f));
     modelObj.scale(glm::vec3(1.0f));
+    lightcube.translate(glm::vec3(250.0f, -80.0f, 100.0f));
+    lightcube.scale(glm::vec3(20.0f));
 
     //ToDo to nie lepiej, ¿eby by³o w klasie odpowiadaj¹cej za wyœwietlanie? Object3DDisplayer mog³by tym zarz¹dzaæ. Tak zeby mieæ wszystko w jednym miejscu co do wyœwietlania. 
     ShaderMode selectedShaderMode = ShaderMode::Gradient;
@@ -157,7 +159,7 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        
+
         //ToDo tutaj tak samo. Zastanow sie jak uniknac ifow. moze lepiej zrobic to w klasie Object3DDisplayer? w przypadku dodania nowych trybow trzeba by bylo rozbudowywac tego ifa a to troche bez sensu bo niezgodne z Solid oraz trzeba szukac w kupie kodu gdzie jest ten if. Nawet nie wiemy czy to jedyny if ktory musimy zedytowac.
         if (selectedShaderMode == ShaderMode::Lighting) {
             ShadowShaderProgram shaderProgram = ShadowShaderProgram(Shader(GL_VERTEX_SHADER, "shaders/ligthing_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/ligthing_fragment_shader.glsl"));
@@ -198,7 +200,7 @@ int main()
 
     glfwDestroyWindow(window);
     glfwTerminate();
-    
+
 
     return 0;
 }

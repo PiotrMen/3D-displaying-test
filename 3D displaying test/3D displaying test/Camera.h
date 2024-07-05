@@ -20,17 +20,17 @@ const float SENSITIVITY = 0.1f;
 const float ZOOM = 30.0f; // Changed from 45.0f to 30.0f
 
 //ToDo ja wole osobiscie pisac klasy w ten sposob zawsze i potem wiem dokladnie gdzie czego szukac. Chodzi tez o to, ze programiste innego interesuja tylko rzeczy publiczne a prywatne wgl nie. Wiec ma wszystko publiczne od razu na gorze:
-class Camera
-{
-public:
-    //!Wszystkie metody publiczne
-public:
-    //!Wszystkie zmienne publiczne
-private:
-    //!Wszystkie metody prywatne
-private:
-    //!Wszystkie zmienne prywatne
-};
+//class Camera
+//{
+//public:
+//    //!Wszystkie metody publiczne
+//public:
+//    //!Wszystkie zmienne publiczne
+//private:
+//    //!Wszystkie metody prywatne
+//private:
+//    //!Wszystkie zmienne prywatne
+//};
 
 class Camera
 {

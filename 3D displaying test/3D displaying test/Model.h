@@ -17,18 +17,11 @@ struct Vertex {
 	glm::vec3 color;
 };
 
-enum class ModelType {
-    Cube
-};
-
-
 class Model
 {
 public:   
     explicit Model(const std::string& path);
     explicit Model(const std::vector<Vertex>& verticies);
-    //ToDo to raczej niepotrzebne. Ja bym to widzial jako nowa klasa Cube ktora dziedziczy po Model. Dzieki temu w przyszlosci dodajac nowe klasy sphere itp nie musimy edytowac istniejacego kodu.
-    explicit Model(ModelType type, const glm::vec3& position, const glm::vec3& size);
     ~Model();
     void bind() const;
     const std::vector<Vertex>& getVertices() const;
@@ -44,7 +37,6 @@ private:
     void cleanup();
     void setupModel();
     void loadModel();
-    void createCube(const glm::vec3& position, const glm::vec3& size);
 private:
     glm::vec3 _modelPos;
     std::string _path;
@@ -53,3 +45,11 @@ private:
     glm::mat4 _model;
 };
 
+class Cube : public Model
+{
+public:
+    Cube() : Model(createCubeVertices()) {}
+    ~Cube() {}
+private:
+    std::vector<Vertex> createCubeVertices();
+};
