@@ -69,15 +69,16 @@ int main()
 	ShadowShaderProgram shadowShaderProgram(Shader(GL_VERTEX_SHADER, "shaders/ligthing_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/ligthing_fragment_shader.glsl"));
 	// Load model
 	Model modelObj("3d files/figure_Hollow_Supp.stl");
-	Model lightcube(ModelType::Cube, glm::vec3(250.0f, -80.0f, 100.0f), glm::vec3(20.0f));
+	Cube lightcube;
 	Camera camera(glm::vec3(0.0f, 0.0f, 10.0f));
 	Object3DDisplayer object3DDisplayer(mode->width, mode->height);
-
 	glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 	// Ustawianie macierzy modelu
 	modelObj.translate(glm::vec3(0.0f, 0.0f, 0.0f));
 	modelObj.rotate(glm::radians(90.f), glm::vec3(1.0f, 0.0f, 0.0f));
 	modelObj.scale(glm::vec3(1.0f));
+	lightcube.translate(glm::vec3(250.0f, -80.0f, 100.0f));
+	lightcube.scale(glm::vec3(20.0f));
 
 	ShaderMode selectedShaderMode = ShaderMode::Gradient;
 	RenderingMode selectedRenderingMode = RenderingMode::FILL;
