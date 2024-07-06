@@ -108,6 +108,12 @@ void Model::scale(const glm::vec3& scalingRatio)
 
 }
 
+Cube::Cube(const glm::vec3& translationVector, const glm::vec3& scalingRatio) : Model(createCubeVertices())
+{
+    this->translate(translationVector);
+    this->scale(scalingRatio);
+}
+
 std::vector<Vertex> Cube::createCubeVertices()
 {
     std::vector<Vertex> vertices = {

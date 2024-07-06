@@ -49,6 +49,7 @@ class Cube : public Model
 {
 public:
     Cube() : Model(createCubeVertices()) {}
+    Cube(const glm::vec3& translationVector, const glm::vec3& scalingRatio);
     ~Cube() {}
 private:
     std::vector<Vertex> createCubeVertices();

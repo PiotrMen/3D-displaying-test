@@ -75,15 +75,13 @@ int main()
     Model modelObj("3d files/figure_Hollow_Supp.stl");
 
     //ToDo Light cube jest potrzebne tylko w jednym trybie. Chyba niepotrzebnie go inicjalizujemy zawsze.
-    Cube lightcube;
+    Cube lightcube(glm::vec3(250.0f, -80.0f, 100.0f),(glm::vec3(20.0f)));
     Object3DDisplayer object3DDisplayer(mode->width, mode->height);
 
     // Ustawianie macierzy modelu
     modelObj.translate(glm::vec3(0.0f, 0.0f, 0.0f));
     modelObj.rotate(glm::radians(90.f), glm::vec3(1.0f, 0.0f, 0.0f));
     modelObj.scale(glm::vec3(1.0f));
-    lightcube.translate(glm::vec3(250.0f, -80.0f, 100.0f));
-    lightcube.scale(glm::vec3(20.0f));
 
     //ToDo to nie lepiej, ¿eby by³o w klasie odpowiadaj¹cej za wyœwietlanie? Object3DDisplayer mog³by tym zarz¹dzaæ. Tak zeby mieæ wszystko w jednym miejscu co do wyœwietlania. 
     ShaderMode selectedShaderMode = ShaderMode::Gradient;
