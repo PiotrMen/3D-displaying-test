@@ -83,10 +83,6 @@ int main()
     modelObj.rotate(glm::radians(90.f), glm::vec3(1.0f, 0.0f, 0.0f));
     modelObj.scale(glm::vec3(1.0f));
 
-    //ToDo to nie lepiej, ¿eby by³o w klasie odpowiadaj¹cej za wyœwietlanie? Object3DDisplayer mog³by tym zarz¹dzaæ. Tak zeby mieæ wszystko w jednym miejscu co do wyœwietlania. 
-    ShaderMode selectedShaderMode = ShaderMode::Gradient;
-    RenderingMode selectedRenderingMode = RenderingMode::FILL;
-
     //ToDo to tak samo nie potrzebne w ka¿dym z trybów. 
     // Variables for light properties
     static float ambientStrength = 0.1f;
@@ -117,30 +113,30 @@ int main()
         // ImGui Radio buttons do wyboru shaderów
         //todo mozna zrobic tu settera ktory bedzie ustawial nowa klase w Object3DDisplayer na przyklad DisplayingMode ktory tworzy klase i odrazu zapisuje ja w Object3DDisplayer
 
-        if (ImGui::RadioButton("Gradient Shader", selectedShaderMode == ShaderMode::Gradient)) selectedShaderMode = ShaderMode::Gradient;
+        if (ImGui::RadioButton("Gradient Shader", object3DDisplayer.getShaderMode() == ShaderMode::Gradient)) object3DDisplayer.setShaderMode(ShaderMode::Gradient);
         ImGui::SameLine();
-        if (ImGui::RadioButton("Lighting Shader", selectedShaderMode == ShaderMode::Lighting)) selectedShaderMode = ShaderMode::Lighting;
+        if (ImGui::RadioButton("Lighting Shader", object3DDisplayer.getShaderMode() == ShaderMode::Lighting)) object3DDisplayer.setShaderMode(ShaderMode::Lighting);
 
         //ToDo te wszystkie Ify mozna chyba zrobic w klasie do wyswietlania. Generalnie wtedy kiedy mozna unikac ifow to lepiej to robic. To jest bardzo nieuniwersalne podejscie, ale najprostsze. Dlatego teraz warto to moze zrefaktoryzowac.
         // Display sliders only if Lighting Shader is selected
-        if (selectedShaderMode == ShaderMode::Lighting) {
+        if (object3DDisplayer.getShaderMode() == ShaderMode::Lighting) {
             ImGui::SliderFloat("Ambient Strength", &ambientStrength, 0.0f, 1.0f);
             ImGui::SliderFloat("Diffuse Strength", &diffuseStrength, 0.0f, 1.0f);
             ImGui::SliderFloat("Specular Strength", &specularStrength, 0.0f, 1.0f);
         }
 
         // ImGui radio buttons for rendering mode selection
-        if (selectedShaderMode == ShaderMode::Gradient) {
-            if (ImGui::RadioButton("Point Cloud", selectedRenderingMode == RenderingMode::POINT)) selectedRenderingMode = RenderingMode::POINT;
+        if (object3DDisplayer.getShaderMode() == ShaderMode::Gradient) {
+            if (ImGui::RadioButton("Point Cloud", object3DDisplayer.getRenderingMode() == RenderingMode::POINT)) object3DDisplayer.setRenderMode(RenderingMode::POINT);
             ImGui::SameLine();
-            if (ImGui::RadioButton("Wireframe", selectedRenderingMode == RenderingMode::LINE)) selectedRenderingMode = RenderingMode::LINE;
+            if (ImGui::RadioButton("Wireframe", object3DDisplayer.getRenderingMode() == RenderingMode::LINE)) object3DDisplayer.setRenderMode(RenderingMode::LINE);
             ImGui::SameLine();
-            if (ImGui::RadioButton("Filled", selectedRenderingMode == RenderingMode::FILL)) selectedRenderingMode = RenderingMode::FILL;
-            ImGui::PushItemWidth(1000);  // Set width to 1000 pixels
+            if (ImGui::RadioButton("Filled", object3DDisplayer.getRenderingMode() == RenderingMode::FILL)) object3DDisplayer.setRenderMode(RenderingMode::FILL);
+            ImGui::PushItemWidth(1000);
             ImGui::SliderFloat("Element Usage (%)", &elementUsagePercentage, 0.0f, 100.0f);
         }
         else {
-            selectedRenderingMode = RenderingMode::FILL;
+            object3DDisplayer.setRenderMode(RenderingMode::FILL);
             elementUsagePercentage = 100.0f;
         }
 
@@ -159,22 +155,22 @@ int main()
 
 
         //ToDo tutaj tak samo. Zastanow sie jak uniknac ifow. moze lepiej zrobic to w klasie Object3DDisplayer? w przypadku dodania nowych trybow trzeba by bylo rozbudowywac tego ifa a to troche bez sensu bo niezgodne z Solid oraz trzeba szukac w kupie kodu gdzie jest ten if. Nawet nie wiemy czy to jedyny if ktory musimy zedytowac.
-        if (selectedShaderMode == ShaderMode::Lighting) {
+        if (object3DDisplayer.getShaderMode() == ShaderMode::Lighting) {
             ShadowShaderProgram shaderProgram = ShadowShaderProgram(Shader(GL_VERTEX_SHADER, "shaders/ligthing_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/ligthing_fragment_shader.glsl"));
             shaderProgram.use();
             shaderProgram.setValues(projection, view, camera, lightcube.getModelPos(), ambientStrength, diffuseStrength, specularStrength);
-            object3DDisplayer.display(modelObj, &shaderProgram, selectedRenderingMode, elementUsagePercentage);
+            object3DDisplayer.display(modelObj, &shaderProgram, object3DDisplayer.getRenderingMode(), elementUsagePercentage);
             //shadowShaderProgram.use();
             //shadowShaderProgram.setValues(projection, view, camera, lightcube.getModelPos(), ambientStrength, diffuseStrength, specularStrength);
             //object3DDisplayer.display(modelObj, std::make_unique<ShaderProgram>(shaderProgram).get(), selectedRenderingMode, elementUsagePercentage);
             cubeShaderProgram.use();
             cubeShaderProgram.setValues(projection, view, lightcube.getModelMatrix());
-            object3DDisplayer.display(lightcube, &cubeShaderProgram, selectedRenderingMode, elementUsagePercentage);
+            object3DDisplayer.display(lightcube, &cubeShaderProgram, object3DDisplayer.getRenderingMode(), elementUsagePercentage);
         }
-        else if (selectedShaderMode == ShaderMode::Gradient) {
+        else if (object3DDisplayer.getShaderMode() == ShaderMode::Gradient) {
             gradientShaderProgram.use();
             gradientShaderProgram.setValues(projection, view, camera, camera.GetDistanceFromTarget());
-            object3DDisplayer.display(modelObj, &gradientShaderProgram, selectedRenderingMode, elementUsagePercentage);
+            object3DDisplayer.display(modelObj, &gradientShaderProgram, object3DDisplayer.getRenderingMode(), elementUsagePercentage);
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         ImGui::Image((void*)(intptr_t)object3DDisplayer.getTexColorBuffer(), ImVec2(mode->width, mode->height));
@@ -198,8 +194,6 @@ int main()
 
     glfwDestroyWindow(window);
     glfwTerminate();
-
-
     return 0;
 }
 

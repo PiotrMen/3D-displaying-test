@@ -31,10 +31,15 @@ public:
 	~Object3DDisplayer();
 
 	void display(const Model& modelToDisplay, ShaderProgram* shaderProgram, RenderingMode renderingMode, float elementUsagePercentage) override; // Implementacja z IObject3DDisplayer
-	
 	unsigned int getFrameBuffer()const override;
 	unsigned int getTexColorBuffer()const override;
-
+	ShaderMode getShaderMode();
+	RenderingMode getRenderingMode();
+	void setShaderMode(ShaderMode mode);
+	void setRenderMode(RenderingMode mode);
+public:
+	ShaderMode currentShaderMode;
+	RenderingMode currentRenderingMode;
 private:
 	unsigned int _framebuffer{};
 	unsigned int _texColorBuffer{};

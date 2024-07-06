@@ -1,5 +1,5 @@
 #include "Object3DDisplayer.h"
-Object3DDisplayer::Object3DDisplayer(int width, int height) : _width(width), _height(height) {
+Object3DDisplayer::Object3DDisplayer(int width, int height) : _width(width), _height(height), currentRenderingMode(RenderingMode::FILL), currentShaderMode(ShaderMode::Gradient) {
 	glEnable(GL_DEPTH_TEST);
 
 	// Create framebuffer
@@ -63,4 +63,24 @@ unsigned int Object3DDisplayer::getFrameBuffer()const
 unsigned int Object3DDisplayer::getTexColorBuffer()const
 {
 	return this->_texColorBuffer;
+}
+
+ShaderMode Object3DDisplayer::getShaderMode()
+{
+	return this->currentShaderMode;
+}
+
+RenderingMode Object3DDisplayer::getRenderingMode()
+{
+	return this->currentRenderingMode;
+}
+
+void Object3DDisplayer::setShaderMode(ShaderMode mode)
+{
+	this->currentShaderMode = mode;
+}
+
+void Object3DDisplayer::setRenderMode(RenderingMode mode)
+{
+	this->currentRenderingMode = mode;
 }
