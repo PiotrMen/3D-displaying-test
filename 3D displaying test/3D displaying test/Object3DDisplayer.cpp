@@ -1,5 +1,5 @@
 #include "Object3DDisplayer.h"
-Object3DDisplayer::Object3DDisplayer(int width, int height) : _width(width), _height(height), currentRenderingMode(RenderingMode::FILL), currentShaderMode(ShaderMode::Gradient) {
+Object3DDisplayer::Object3DDisplayer(int width, int height, std::unique_ptr<ShaderProgram> shaderProgram) : _width(width), _height(height), _currentRenderingMode(RenderingMode::FILL), _shaderProgram(std::move(shaderProgram)) {
 	glEnable(GL_DEPTH_TEST);
 
 	// Create framebuffer
@@ -56,6 +56,11 @@ void Object3DDisplayer::display(const Model& modelToDisplay, ShaderProgram* shad
 	glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 }
 
+void Object3DDisplayer::display(const Model& modelToDisplay)
+{
+	this->display(modelToDisplay, this->_shaderProgram.get(), RenderingMode::FILL, 100);
+}
+
 unsigned int Object3DDisplayer::getFrameBuffer()const
 {
 	return this->_framebuffer;
@@ -65,22 +70,22 @@ unsigned int Object3DDisplayer::getTexColorBuffer()const
 	return this->_texColorBuffer;
 }
 
-ShaderMode Object3DDisplayer::getShaderMode()
+std::shared_ptr<ShaderProgram> Object3DDisplayer::getShaderProgram() const
 {
-	return this->currentShaderMode;
+	return this->_shaderProgram;
 }
 
 RenderingMode Object3DDisplayer::getRenderingMode()
 {
-	return this->currentRenderingMode;
+	return this->_currentRenderingMode;
 }
 
-void Object3DDisplayer::setShaderMode(ShaderMode mode)
+void Object3DDisplayer::setShaderProgram(std::unique_ptr<ShaderProgram> shaderProgram)
 {
-	this->currentShaderMode = mode;
+	this->_shaderProgram = std::move(shaderProgram);
 }
 
 void Object3DDisplayer::setRenderMode(RenderingMode mode)
 {
-	this->currentRenderingMode = mode;
+	this->_currentRenderingMode = mode;
 }

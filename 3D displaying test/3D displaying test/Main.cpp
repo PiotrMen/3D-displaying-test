@@ -67,21 +67,22 @@ int main()
 
     //ToDo nie inicjalizowac od razu wszystkich shaderow tylko te wybrane (szkoda czasu przetwarzania i pamiêci jeœli to nie jest potrzebne). Mozna to zrobic dopiero w Ifie nizej gdzie sprawdzamy jaki guzik nacisniety. Skorzystaj z dziedziczenia. 
     // Build and compile our shader program
-    GradientShaderProgram gradientShaderProgram(Shader(GL_VERTEX_SHADER, "shaders/Gradient_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/Gradient_fragment_shader.glsl"));
+    //GradientShaderProgram gradientShaderProgram(Shader(GL_VERTEX_SHADER, "shaders/Gradient_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/Gradient_fragment_shader.glsl"));
     CubeShaderProgram cubeShaderProgram(Shader(GL_VERTEX_SHADER, "shaders/cube_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/cube_fragment_shader.glsl"));
-    ShadowShaderProgram shadowShaderProgram(Shader(GL_VERTEX_SHADER, "shaders/ligthing_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/ligthing_fragment_shader.glsl"));
-
+    //ShadowShaderProgram shadowShaderProgram(Shader(GL_VERTEX_SHADER, "shaders/ligthing_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/ligthing_fragment_shader.glsl"));
+    std::unique_ptr<ShaderConfig> shaderConfig;
     // Load model
-    Model modelObj("3d files/figure_Hollow_Supp.stl");
+    Cube modelObj;
+    //Model modelObj("3d files/figure_Hollow_Supp.stl");
 
     //ToDo Light cube jest potrzebne tylko w jednym trybie. Chyba niepotrzebnie go inicjalizujemy zawsze.
     Cube lightcube(glm::vec3(250.0f, -80.0f, 100.0f),(glm::vec3(20.0f)));
-    Object3DDisplayer object3DDisplayer(mode->width, mode->height);
+    Object3DDisplayer object3DDisplayer(mode->width, mode->height, std::make_unique<GradientShaderProgram>(Shader(GL_VERTEX_SHADER, "shaders/Gradient_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/Gradient_fragment_shader.glsl")));
 
     // Ustawianie macierzy modelu
     modelObj.translate(glm::vec3(0.0f, 0.0f, 0.0f));
     modelObj.rotate(glm::radians(90.f), glm::vec3(1.0f, 0.0f, 0.0f));
-    modelObj.scale(glm::vec3(1.0f));
+    modelObj.scale(glm::vec3(50.0f));
 
     //ToDo to tak samo nie potrzebne w ka¿dym z trybów. 
     // Variables for light properties
@@ -113,20 +114,22 @@ int main()
         // ImGui Radio buttons do wyboru shaderów
         //todo mozna zrobic tu settera ktory bedzie ustawial nowa klase w Object3DDisplayer na przyklad DisplayingMode ktory tworzy klase i odrazu zapisuje ja w Object3DDisplayer
 
-        if (ImGui::RadioButton("Gradient Shader", object3DDisplayer.getShaderMode() == ShaderMode::Gradient)) object3DDisplayer.setShaderMode(ShaderMode::Gradient);
+        if (ImGui::RadioButton("Gradient Shader", dynamic_cast<GradientShaderProgram*>(object3DDisplayer.getShaderProgram().get()) != nullptr))
+            object3DDisplayer.setShaderProgram(std::make_unique<GradientShaderProgram>(Shader(GL_VERTEX_SHADER, "shaders/Gradient_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/Gradient_fragment_shader.glsl")));
         ImGui::SameLine();
-        if (ImGui::RadioButton("Lighting Shader", object3DDisplayer.getShaderMode() == ShaderMode::Lighting)) object3DDisplayer.setShaderMode(ShaderMode::Lighting);
+        if (ImGui::RadioButton("Lighting Shader", dynamic_cast<ShadowShaderProgram*>(object3DDisplayer.getShaderProgram().get()) != nullptr))
+            object3DDisplayer.setShaderProgram(std::make_unique<ShadowShaderProgram>(Shader(GL_VERTEX_SHADER, "shaders/ligthing_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/ligthing_fragment_shader.glsl")));
 
         //ToDo te wszystkie Ify mozna chyba zrobic w klasie do wyswietlania. Generalnie wtedy kiedy mozna unikac ifow to lepiej to robic. To jest bardzo nieuniwersalne podejscie, ale najprostsze. Dlatego teraz warto to moze zrefaktoryzowac.
         // Display sliders only if Lighting Shader is selected
-        if (object3DDisplayer.getShaderMode() == ShaderMode::Lighting) {
+        if (dynamic_cast<ShadowShaderProgram*>(object3DDisplayer.getShaderProgram().get()) != nullptr) {
             ImGui::SliderFloat("Ambient Strength", &ambientStrength, 0.0f, 1.0f);
             ImGui::SliderFloat("Diffuse Strength", &diffuseStrength, 0.0f, 1.0f);
             ImGui::SliderFloat("Specular Strength", &specularStrength, 0.0f, 1.0f);
         }
 
         // ImGui radio buttons for rendering mode selection
-        if (object3DDisplayer.getShaderMode() == ShaderMode::Gradient) {
+        if (dynamic_cast<GradientShaderProgram*>(object3DDisplayer.getShaderProgram().get()) != nullptr) {
             if (ImGui::RadioButton("Point Cloud", object3DDisplayer.getRenderingMode() == RenderingMode::POINT)) object3DDisplayer.setRenderMode(RenderingMode::POINT);
             ImGui::SameLine();
             if (ImGui::RadioButton("Wireframe", object3DDisplayer.getRenderingMode() == RenderingMode::LINE)) object3DDisplayer.setRenderMode(RenderingMode::LINE);
@@ -155,22 +158,35 @@ int main()
 
 
         //ToDo tutaj tak samo. Zastanow sie jak uniknac ifow. moze lepiej zrobic to w klasie Object3DDisplayer? w przypadku dodania nowych trybow trzeba by bylo rozbudowywac tego ifa a to troche bez sensu bo niezgodne z Solid oraz trzeba szukac w kupie kodu gdzie jest ten if. Nawet nie wiemy czy to jedyny if ktory musimy zedytowac.
-        if (object3DDisplayer.getShaderMode() == ShaderMode::Lighting) {
-            ShadowShaderProgram shaderProgram = ShadowShaderProgram(Shader(GL_VERTEX_SHADER, "shaders/ligthing_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/ligthing_fragment_shader.glsl"));
-            shaderProgram.use();
-            shaderProgram.setValues(projection, view, camera, lightcube.getModelPos(), ambientStrength, diffuseStrength, specularStrength);
-            object3DDisplayer.display(modelObj, &shaderProgram, object3DDisplayer.getRenderingMode(), elementUsagePercentage);
+        if (dynamic_cast<ShadowShaderProgram*>(object3DDisplayer.getShaderProgram().get()) != nullptr) {
+            //ShadowShaderProgram shaderProgram = ShadowShaderProgram(Shader(GL_VERTEX_SHADER, "shaders/ligthing_vertex_shader.glsl"), Shader(GL_FRAGMENT_SHADER, "shaders/ligthing_fragment_shader.glsl"));
+            object3DDisplayer.getShaderProgram()->use();
+            shaderConfig = std::make_unique<ShadowShaderConfig>(projection, view, camera, lightcube.getModelPos(), ambientStrength, diffuseStrength, specularStrength);
+            shaderConfig->apply(object3DDisplayer.getShaderProgram().get());
+			object3DDisplayer.display(modelObj);
+
+            //object3DDisplayer.display(modelObj);
             //shadowShaderProgram.use();
             //shadowShaderProgram.setValues(projection, view, camera, lightcube.getModelPos(), ambientStrength, diffuseStrength, specularStrength);
             //object3DDisplayer.display(modelObj, std::make_unique<ShaderProgram>(shaderProgram).get(), selectedRenderingMode, elementUsagePercentage);
             cubeShaderProgram.use();
             cubeShaderProgram.setValues(projection, view, lightcube.getModelMatrix());
-            object3DDisplayer.display(lightcube, &cubeShaderProgram, object3DDisplayer.getRenderingMode(), elementUsagePercentage);
+			//object3DDisplayer.setShaderProgram(std::make_unique<CubeShaderProgram>(cubeShaderProgram));
+            //object3DDisplayer.display(lightcube);
+            object3DDisplayer.display(lightcube, &cubeShaderProgram, RenderingMode::FILL, 100);
+
         }
-        else if (object3DDisplayer.getShaderMode() == ShaderMode::Gradient) {
-            gradientShaderProgram.use();
-            gradientShaderProgram.setValues(projection, view, camera, camera.GetDistanceFromTarget());
-            object3DDisplayer.display(modelObj, &gradientShaderProgram, object3DDisplayer.getRenderingMode(), elementUsagePercentage);
+        else if (dynamic_cast<GradientShaderProgram*>(object3DDisplayer.getShaderProgram().get()) != nullptr) {
+            object3DDisplayer.getShaderProgram()->use();
+            //gradientShaderProgram.use();
+            //gradientShaderProgram.setValues(projection, view, camera, camera.GetDistanceFromTarget());
+			//object3DDisplayer.setShaderProgram(std::make_unique<GradientShaderProgram>(gradientShaderProgram));
+			shaderConfig = std::make_unique<GradientShaderConfig>(GradientShaderConfig(projection, view, camera, camera.GetDistanceFromTarget()));
+            shaderConfig->apply(object3DDisplayer.getShaderProgram().get());
+            object3DDisplayer.display(modelObj);
+			//object3DDisplayer.display(modelObj, &gradientShaderProgram, RenderingMode::FILL, 100);
+
+
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         ImGui::Image((void*)(intptr_t)object3DDisplayer.getTexColorBuffer(), ImVec2(mode->width, mode->height));

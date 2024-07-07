@@ -5,7 +5,7 @@
 
 class DisplayManager {
 public:
-	DisplayManager(int width, int height) : currentDisplayer(nullptr), currentImageDisplayer(nullptr), currentObject3DDisplayer(nullptr) { this->setDisplayMode<Object3DDisplayer>(width, height); }
+	DisplayManager(int width, int height) : currentDisplayer(nullptr), currentImageDisplayer(nullptr), currentObject3DDisplayer(nullptr) { /*this->setDisplayMode<Object3DDisplayer>(width, height, );*/ }
 
 	template <typename DisplayerType, typename... Args>
 	void setDisplayMode(Args&&... args) {
@@ -22,10 +22,9 @@ public:
 			throw std::runtime_error("Current displayer is not an image displayer");
 		}
 	}
-
-	void displayObject3D(const Model& modelToDisplay, ShaderProgram* shaderProgram, RenderingMode renderingMode, float elementUsagePercentage) {
+	void displayObject3D(const Model& modelToDisplay) {
 		if (currentObject3DDisplayer) {
-			currentObject3DDisplayer->display(modelToDisplay, shaderProgram, renderingMode, elementUsagePercentage);
+			currentObject3DDisplayer->display(modelToDisplay);
 		}
 		else {
 			throw std::runtime_error("Current displayer is not an object 3D displayer");
@@ -33,6 +32,16 @@ public:
 	}
 
 private:
+
+	/*void displayObject3D(const Model& modelToDisplay, const std::unique_ptr<ShaderProgram> shaderProgram, RenderingMode renderingMode, float elementUsagePercentage) {
+		if (currentObject3DDisplayer) {
+			currentObject3DDisplayer->display(modelToDisplay, shaderProgram, renderingMode, elementUsagePercentage);
+		}
+		else {
+			throw std::runtime_error("Current displayer is not an object 3D displayer");
+		}
+	}*/
+
 	std::unique_ptr<IDisplayer> currentDisplayer;
 	IImageModeDisplayer* currentImageDisplayer;
 	IObject3DDisplayer* currentObject3DDisplayer;
