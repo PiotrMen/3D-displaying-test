@@ -119,3 +119,4 @@ Place `.stl` files in `3d files/` relative to the working directory. The default
 ## Author
 
 - GitHub: [@PiotrMen](https://github.com/PiotrMen)
+- GitHub: [@Kendrej](https://github.com/Kendrej)
