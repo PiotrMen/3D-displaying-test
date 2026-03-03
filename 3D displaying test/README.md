@@ -12,12 +12,12 @@
 
 ### Main Features
 
-- **Multiple shader modes** — Gradient (distance-based coloring) and Phong Lighting (ambient + diffuse + specular)
-- **Rendering mode switching** — Filled, Wireframe, and Point Cloud views
-- **Real-time light controls** — Adjustable ambient, diffuse, and specular strengths via ImGui sliders
-- **Element usage slider** — Progressively reveal model geometry from 0% to 100%
-- **Orbital camera** — Automated rotation around the model with toggle on/off
-- **Off-screen rendering** — Scene rendered to FBO and displayed as a texture inside an ImGui window
+- **Multiple shader modes** â€” Gradient (distance-based coloring) and Phong Lighting (ambient + diffuse + specular)
+- **Rendering mode switching** â€” Filled, Wireframe, and Point Cloud views
+- **Real-time light controls** â€” Adjustable ambient, diffuse, and specular strengths via ImGui sliders
+- **Element usage slider** â€” Progressively reveal model geometry from 0% to 100%
+- **Orbital camera** â€” Automated rotation around the model with toggle on/off
+- **Off-screen rendering** â€” Scene rendered to FBO and displayed as a texture inside an ImGui window
 
 ---
 
@@ -59,9 +59,9 @@
 
 ### Key Design Patterns
 
-- **Inheritance & Polymorphism** — Base `ShaderProgram` class with specialized subclasses (`GradientShaderProgram`, `ShadowShaderProgram`, `CubeShaderProgram`) encapsulating uniform setup per technique
-- **Strategy Pattern** — `IDisplayer` interface branching into `IImageModeDisplayer` and `IObject3DDisplayer`, managed by `DisplayManager` for runtime switching between 2D and 3D display modes
-- **Factory-like Construction** — `Cube` class extends `Model` by injecting procedurally generated vertex data via base constructor
+- **Inheritance & Polymorphism** â€” Base `ShaderProgram` class with specialized subclasses (`GradientShaderProgram`, `ShadowShaderProgram`, `CubeShaderProgram`) encapsulating uniform setup per technique
+- **Strategy Pattern** â€” `IDisplayer` interface branching into `IImageModeDisplayer` and `IObject3DDisplayer`, managed by `DisplayManager` for runtime switching between 2D and 3D display modes
+- **Factory-like Construction** â€” `Cube` class extends `Model` by injecting procedurally generated vertex data via base constructor
 
 ---
 
@@ -70,7 +70,7 @@
 ### Prerequisites
 - **Windows 10/11**
 - **Visual Studio 2022** with C++ Desktop workload
-- **OpenCV** — set `MULTIOPTICALS_DEV_DIR` environment variable so that `%MULTIOPTICALS_DEV_DIR%\OpenCV\opencv\build\include` is valid
+- **OpenCV** â€” set `MULTIOPTICALS_DEV_DIR` environment variable so that `%MULTIOPTICALS_DEV_DIR%\OpenCV\opencv\build\include` is valid
 
 ### Build (Visual Studio)
 
@@ -99,7 +99,7 @@ Place `.stl` files in `3d files/` relative to the working directory. The default
 | `ESC` | Close the application |
 | Shader radio buttons | Switch between Gradient and Lighting mode |
 | Rendering radio buttons | Switch between Filled / Wireframe / Point Cloud (Gradient mode) |
-| Element Usage slider | Control percentage of rendered vertices (0–100%) |
+| Element Usage slider | Control percentage of rendered vertices (0â€“100%) |
 | Ambient / Diffuse / Specular sliders | Adjust light properties (Lighting mode) |
 | Camera Rotation button | Toggle automated orbital camera |
 
@@ -119,3 +119,4 @@ Place `.stl` files in `3d files/` relative to the working directory. The default
 ## Author
 
 - GitHub: [@PiotrMen](https://github.com/PiotrMen)
+- GitHub: [@Kendrej](https://github.com/Kendrej)
